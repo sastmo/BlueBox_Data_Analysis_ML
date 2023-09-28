@@ -1,3 +1,12 @@
+"""
+This Python script is designed to efficiently manage and manipulate data related to cities in Canada. 
+It serves multiple purposes, including data ingestion, preprocessing, matching, merging, and data storage. 
+In addition to its primary functions, the script also plays a crucial role in identifying and associating 
+geographic coordinates (latitude and longitude) with each program code within the Blue Box program dataset. 
+Furthermore, it enriches the existing data model includes Cost and Revenue data, Program Marketed Tonnes, and Finance Program Data, 
+by adding the geolocation data (lot, long) of each program code.   
+"""
+
 import numpy as np
 import csv
 import pandas as pd
