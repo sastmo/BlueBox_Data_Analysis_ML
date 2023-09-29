@@ -1,3 +1,5 @@
+from itertools import cycle
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -8,6 +10,7 @@ from scipy.optimize import curve_fit
 import mplcursors
 
 
+# Function to load and preprocess data from Excel files
 def load_and_preprocess_data():
     # Define file paths
     csv_file_path_MT = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\Market_Tonnes.xlsx"
@@ -95,8 +98,16 @@ def power_law(x, a, b):
     return a * np.power(x, b)
 
 
-def create_scatter_plot(ax, x_values, y_values, x_label, y_label, program_codes):
-    scatter = sns.scatterplot(x=x_values, y=y_values, ax=ax, alpha=0.7, color='blue')
+# Function to create scatter plots for feature analysis
+
+def create_scatter_plot(ax, x_values, y_values, x_label, y_label, program_codes, group_municipality):
+    # Define a custom colormap for cluster labels
+    num_group_municipality = len(set(group_municipality))
+    cmap = plt.cm.get_cmap('tab10', num_group_municipality)
+    colors = cycle(cmap.colors)
+
+    # Create scatter points with different colors based on cluster labels
+    scatter = sns.scatterplot(x=x_values, y=y_values, hue=group_municipality, palette=colors, ax=ax, alpha=0.7)
 
     # Fit a power-law curve (y = a*x^b) to the data
     popt, _ = curve_fit(power_law, x_values, y_values)
@@ -106,7 +117,16 @@ def create_scatter_plot(ax, x_values, y_values, x_label, y_label, program_codes)
     x_fit = np.linspace(0, 1, 100)
     y_fit = power_law(x_fit, a, b)
 
-    sns.lineplot(x=x_fit, y=y_fit, ax=ax, color='orange', label=f'Fit (y = {a:.2f} * x^{b:.2f})')
+    # sns.lineplot(x=x_fit, y=y_fit, ax=ax, color='orange', label=f'Fit (y = {a:.2f} * x^{b:.2f})')
+
+    # Perform linear regression
+    slope, intercept, r_value, p_value, std_err = stats.linregress(x_values, y_values)
+
+    # Calculate the linear regression line
+    y_fit = slope * x_values + intercept
+
+    # Plot the linear regression line
+    ax.plot(x_values, y_fit, color='orange', label=f'L_Reg (R²={r_value ** 2:.2f}, p={p_value:.2f}, cor={slope:.2f})')
 
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
@@ -116,17 +136,18 @@ def create_scatter_plot(ax, x_values, y_values, x_label, y_label, program_codes)
     # Set aspect ratio to be equal
     ax.set_aspect('equal', adjustable='box')
 
-    # Add a legend
-    ax.legend()
+    # Add a legend based on cluster labels
+    ax.legend(title="Municipal Group")
 
     # Create hover text for scatter points
-    hover_text = [f"Program Code: {code}" for code in program_codes]  # Generate hover text dynamically
+    hover_text = [f"Program Code: {code}, group_municipality: {group}" for code, group in
+                  zip(program_codes, group_municipality)]
 
     hover = mplcursors.cursor(scatter, hover=True)
     hover.connect("add", lambda sel: sel.annotation.set_text(hover_text[sel.target.index]))
 
 
-# Define a function for violin plot
+# Function to create violin plots for categorical features
 def create_violin_plot(ax, x_values, y_values, x_label, y_label):
     sns.violinplot(x=x_values, y=y_values, ax=ax, inner='quartile')
     ax.set_xlabel(x_label)
@@ -143,7 +164,7 @@ def visualize_features(market_agg, unique_years, feature_columns, threshold=20):
 
         # Loop through each year
         for j, year in enumerate(unique_years):
-            year_data = market_agg[market_agg['Year'] == year]
+            year_data = market_agg[market_agg['Year'] == 2021]
 
             if market_agg[feature].dtype == bool or market_agg[feature].dtype == 'category':
                 create_violin_plot(axes[j], year_data[feature],
@@ -168,7 +189,7 @@ def visualize_features(market_agg, unique_years, feature_columns, threshold=20):
                                       ((z_scores_y < threshold) & (z_scores_y > -threshold))]
 
                 create_scatter_plot(axes[j], year_data['x_values'], year_data['y_values'], f'Normalized {feature}',
-                                    'Normalized TOTAL Marketed Tonnes', year_data['Program Code'])
+                                    'Normalized TOTAL Marketed Tonnes', year_data['Program Code'], year_data['Municipal Group'])
 
             axes[j].set_title(f'Year {year}')
             axes[j].grid(False)
@@ -183,6 +204,8 @@ def visualize_features(market_agg, unique_years, feature_columns, threshold=20):
 
         plt.show()
 
+
+market_agg['Municipal Group'] = market_agg['Municipal Group'].astype('category')
 
 # Call the function to visualize features
 visualize_features(market_agg, unique_years, feature_columns)
@@ -208,13 +231,14 @@ def visualize_correlation_features(market_agg, unique_years, correlation_feature
             year_data = market_agg[market_agg['Year'] == year]
 
             # Normalize both axes
-            x_values = (year_data['Total Households Serviced'] - year_data['Total Households Serviced'].min()) / (
-                    year_data['Total Households Serviced'].max() - year_data['Total Households Serviced'].min())
-            y_values = (year_data[feature] - year_data[feature].min()) / (
+            x_values = (year_data[feature] - year_data[feature].min()) / (
                     year_data[feature].max() - year_data[feature].min())
 
-            create_scatter_plot(axes[i], x_values, y_values, 'Normalized Total Households Serviced',
-                                f'Normalized {feature}', year_data['Program Code'])
+            y_values = (year_data['Total Households Serviced'] - year_data['Total Households Serviced'].min()) / (
+                    year_data['Total Households Serviced'].max() - year_data['Total Households Serviced'].min())
+
+            create_scatter_plot(axes[i], x_values, y_values, f'Normalized {feature}',
+                                'Normalized Total Households Serviced', year_data['Program Code'])
             axes[i].set_title(f'Year {year}')
             axes[i].grid(False)
 
@@ -249,8 +273,8 @@ def visualize_households_vs_operation_cost(market_agg, unique_years):
 
         # Create scatter plot for the current year
         plt.figure(figsize=(8, 6))
-        create_scatter_plot(plt.gca(), normalized_total_households, normalized_operation_cost,
-                            'Normalized Total Households Serviced', 'Normalized Operation Cost',
+        create_scatter_plot(plt.gca(), normalized_operation_cost, normalized_total_households,
+                            'Normalized Operation Cost', 'Normalized Total Households Serviced',
                             year_data['Program Code'])
         plt.title(f'Scatter Plot: Normalized Total Households Serviced vs Normalized Operation Cost - Year {year}')
         plt.tight_layout()
