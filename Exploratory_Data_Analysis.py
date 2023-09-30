@@ -1,3 +1,14 @@
+"""
+# This script is designed for in-depth analysis of municipal waste management and financial data.
+# It follows a structured approach, beginning with the definition of key features for visualization.
+# The data is loaded from Excel files and preprocessed, including merging datasets and necessary transformations.
+# The script provides a series of functions, each serving a specific analytical purpose:
+#   - Creating scatter plots, violin plots, and other visualizations to explore variable correlations.
+#   - Visualizing changes over time.
+#   - Categorizing data into quadrants based on specified thresholds.
+#   - Saving analyzed data to a CSV file for further examination.
+# Modular and reusable, users can selectively execute these functions to gain insights into municipal waste management complexities.
+"""
 from itertools import cycle
 import numpy as np
 import pandas as pd
