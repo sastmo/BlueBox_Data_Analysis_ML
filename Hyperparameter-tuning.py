@@ -1,3 +1,13 @@
+"""
+🚀 Welcome to the Data Science Powerhouse! 📊
+
+This script collection is your all-in-one guide to conquering the data science landscape.
+From data processing and feature standardization to tackling multicollinearity and fine-tuning
+with hyperparameter optimization, we've got you covered. Assess model accuracy with a custom function
+and ensure stability with OOB Error vs. Number of Estimators. 💡
+"""
+
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
