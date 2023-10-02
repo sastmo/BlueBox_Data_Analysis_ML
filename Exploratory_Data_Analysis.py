@@ -1,15 +1,3 @@
-"""
-# This script is designed for in-depth analysis of municipal waste management and financial data.
-# It follows a structured approach, beginning with the definition of key features for visualization.
-# The data is loaded from Excel files and preprocessed, including merging datasets and necessary transformations.
-# The script provides a series of functions, each serving a specific analytical purpose:
-#   - Creating scatter plots, violin plots, and other visualizations to explore variable correlations.
-#   - Visualizing changes over time.
-#   - Categorizing data into quadrants based on specified thresholds.
-#   - Saving analyzed data to a CSV file for further examination.
-# Modular and reusable, users can selectively execute these functions to gain insights into municipal waste management complexities.
-"""
-from itertools import cycle
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -17,25 +5,10 @@ import seaborn as sns
 import plotly.express as px
 from scipy import stats
 from scipy.optimize import curve_fit
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from itertools import cycle
-from scipy.optimize import curve_fit
-from scipy import stats
 import mplcursors
 
 
-# Function to load and preprocess data from Excel files
 def load_and_preprocess_data():
-    """
-    Load and preprocess data from Excel files.
-
-    Returns:
-        market_agg (DataFrame): Preprocessed data.
-        unique_years (list): List of unique years in the data.
-    """
     # Define file paths
     csv_file_path_MT = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\Market_Tonnes.xlsx"
     csv_file_path_CR = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\Cost_Revenue.xlsx"
@@ -46,7 +19,6 @@ def load_and_preprocess_data():
     cost_revenue = pd.read_excel(csv_file_path_CR)
     payment_model = pd.read_excel(csv_file_path_FP)
 
-    # Merge dataframes
     merge_agg = pd.merge(market_volume,
                          payment_model,
                          left_on='F key (Cost key)',
@@ -102,55 +74,39 @@ def load_and_preprocess_data():
     return market_agg, unique_years
 
 
-# Function to create scatter plots for feature analysis
-def create_scatter_plot(ax, x_values, y_values, x_label, y_label, program_codes, group_municipality):
-    """
-    Create scatter plots for feature analysis.
+# Call the function to load and preprocess the data
+market_agg, unique_years = load_and_preprocess_data()
 
-    Args:
-        ax (matplotlib.axes._subplots.AxesSubplot): Subplot to plot the scatter plot.
-        x_values (array-like): X-axis values.
-        y_values (array-like): Y-axis values.
-        x_label (str): Label for the X-axis.
-        y_label (str): Label for the Y-axis.
-        program_codes (array-like): Program codes.
-        group_municipality (array-like): Municipal group labels.
+# List of columns to exclude from the scatter plots (identifiers and target column)
+exclude_columns = ['Year', 'Program Code', 'TOTAL Reported and/or Calculated Marketed Tonnes']
 
-    Returns:
-        None
-    """
-    # Define a custom colormap for cluster labels
-    num_group_municipality = len(set(group_municipality))
-    cmap = plt.cm.get_cmap('tab10', num_group_municipality)
-    colors = cycle(cmap.colors)
+# Get the list of feature columns
+feature_columns = [col for col in market_agg.columns if col not in exclude_columns]
 
-    # Create scatter points with different colors based on cluster labels
-    scatter = sns.scatterplot(x=x_values, y=y_values, hue=group_municipality, palette=colors, ax=ax, alpha=0.7)
+# Set the style for the plots
+sns.set(style="whitegrid")
+
+# Calculate the number of rows and columns needed for subplots
+num_rows = 1
+num_cols = len(unique_years)
+
+
+def power_law(x, a, b):
+    return a * np.power(x, b)
+
+
+def create_scatter_plot(ax, x_values, y_values, x_label, y_label, program_codes):
+    scatter = sns.scatterplot(x=x_values, y=y_values, ax=ax, alpha=0.7, color='blue')
 
     # Fit a power-law curve (y = a*x^b) to the data
-    '''
-    def power_law(x, a, b):
-        return a * np.power(x, b)
+    popt, _ = curve_fit(power_law, x_values, y_values)
+    a, b = popt
 
-        # Fit a power-law curve (y = a*x^b) to the data
-        popt, _ = curve_fit(power_law, x_values, y_values)
-        a, b = popt
+    # Create a smooth curve using the fitted parameters
+    x_fit = np.linspace(0, 1, 100)
+    y_fit = power_law(x_fit, a, b)
 
-        # Create a smooth curve using the fitted parameters
-        x_fit = np.linspace(0, 1, 100)
-        y_fit = power_law(x_fit, a, b)
-
-        sns.lineplot(x=x_fit, y=y_fit, ax=ax, color='orange', label=f'Fit (y = {a:.2f} * x^{b:.2f})')
-        '''
-    # Fit a linear curve to the data based on the linear regression
-    # Perform linear regression
-    slope, intercept, r_value, p_value, std_err = stats.linregress(x_values, y_values)
-
-    # Calculate the linear regression line
-    y_fit = slope * x_values + intercept
-
-    # Plot the linear regression line
-    ax.plot(x_values, y_fit, color='orange', label=f'L_Reg (R²={r_value ** 2:.2f}, p={p_value:.2f}, cor={slope:.2f})')
+    sns.lineplot(x=x_fit, y=y_fit, ax=ax, color='orange', label=f'Fit (y = {a:.2f} * x^{b:.2f})')
 
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
@@ -160,53 +116,25 @@ def create_scatter_plot(ax, x_values, y_values, x_label, y_label, program_codes,
     # Set aspect ratio to be equal
     ax.set_aspect('equal', adjustable='box')
 
-    # Add a legend based on cluster labels
-    ax.legend(title="Municipal Group")
+    # Add a legend
+    ax.legend()
 
     # Create hover text for scatter points
-    hover_text = [f"Program Code: {code}, group_municipality: {group}" for code, group in
-                  zip(program_codes, group_municipality)]
+    hover_text = [f"Program Code: {code}" for code in program_codes]  # Generate hover text dynamically
 
     hover = mplcursors.cursor(scatter, hover=True)
     hover.connect("add", lambda sel: sel.annotation.set_text(hover_text[sel.target.index]))
 
 
-# Function to create violin plots for categorical features
-def create_violin_plot(ax, x_values, y_values, x_label, y_label, hue_column):
-    """
-    Create violin plots for categorical features.
-
-    Args:
-        ax (matplotlib.axes._subplots.AxesSubplot): Subplot to plot the violin plot.
-        x_values (array-like): X-axis values.
-        y_values (array-like): Y-axis values.
-        x_label (str): Label for the X-axis.
-        y_label (str): Label for the Y-axis.
-        hue_column (array-like): Hue column for coloring the violin plots.
-
-    Returns:
-        None
-    """
-    sns.violinplot(x=x_values, y=y_values, ax=ax, inner='quartile', hue=hue_column, palette='Set1')
+# Define a function for violin plot
+def create_violin_plot(ax, x_values, y_values, x_label, y_label):
+    sns.violinplot(x=x_values, y=y_values, ax=ax, inner='quartile')
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
-    ax.legend().set_visible(False)  # Hide the legend
 
 
 # Function to create subplots and visualize features
 def visualize_features(market_agg, unique_years, feature_columns, threshold=20):
-    """
-    Create subplots and visualize features.
-
-    Args:
-        market_agg (DataFrame): Preprocessed data.
-        unique_years (list): List of unique years in the data.
-        feature_columns (list): List of feature columns to visualize.
-        threshold (float): Z-score threshold for outlier removal.
-
-    Returns:
-        None
-    """
     # Loop through each feature
     for feature in feature_columns:
         # Create subplots for each year
@@ -220,7 +148,7 @@ def visualize_features(market_agg, unique_years, feature_columns, threshold=20):
             if market_agg[feature].dtype == bool or market_agg[feature].dtype == 'category':
                 create_violin_plot(axes[j], year_data[feature],
                                    year_data['TOTAL Reported and/or Calculated Marketed Tonnes'],
-                                   f'{feature}', 'TOTAL Marketed Tonnes', year_data['Municipal Group'])
+                                   f'{feature}', 'TOTAL Marketed Tonnes')
             else:
                 # Normalize both axes
                 year_data['x_values'] = (year_data[feature] - year_data[feature].min()) / (
@@ -240,8 +168,7 @@ def visualize_features(market_agg, unique_years, feature_columns, threshold=20):
                                       ((z_scores_y < threshold) & (z_scores_y > -threshold))]
 
                 create_scatter_plot(axes[j], year_data['x_values'], year_data['y_values'], f'Normalized {feature}',
-                                    'Normalized TOTAL Marketed Tonnes', year_data['Program Code'],
-                                    year_data['Municipal Group'])
+                                    'Normalized TOTAL Marketed Tonnes', year_data['Program Code'])
 
             axes[j].set_title(f'Year {year}')
             axes[j].grid(False)
@@ -257,22 +184,6 @@ def visualize_features(market_agg, unique_years, feature_columns, threshold=20):
         plt.show()
 
 
-# Call the function to load and preprocess the data
-market_agg, unique_years = load_and_preprocess_data()
-
-# List of columns to exclude from the scatter plots (identifiers and target column)
-exclude_columns = ['Year', 'Program Code', 'TOTAL Reported and/or Calculated Marketed Tonnes']
-
-# Get the list of feature columns
-feature_columns = [col for col in market_agg.columns if col not in exclude_columns]
-
-# Set the style for the plots
-sns.set(style="whitegrid")
-
-# Calculate the number of rows and columns needed for subplots
-num_rows = 1
-num_cols = len(unique_years)
-
 # Call the function to visualize features
 visualize_features(market_agg, unique_years, feature_columns)
 
@@ -287,17 +198,6 @@ correlation_features = [
 
 # Function to create subplots and visualize features
 def visualize_correlation_features(market_agg, unique_years, correlation_features):
-    """
-    Visualizes the correlation between normalized features and 'Total Households Serviced' for each year.
-
-    Args:
-        market_agg (DataFrame): The aggregated market data.
-        unique_years (list): List of unique years.
-        correlation_features (list): List of features to visualize.
-
-    Returns:
-        None
-    """
     # Loop through each feature
     for feature in correlation_features:
         # Create subplots for each year
@@ -308,15 +208,13 @@ def visualize_correlation_features(market_agg, unique_years, correlation_feature
             year_data = market_agg[market_agg['Year'] == year]
 
             # Normalize both axes
-            x_values = (year_data[feature] - year_data[feature].min()) / (
+            x_values = (year_data['Total Households Serviced'] - year_data['Total Households Serviced'].min()) / (
+                    year_data['Total Households Serviced'].max() - year_data['Total Households Serviced'].min())
+            y_values = (year_data[feature] - year_data[feature].min()) / (
                     year_data[feature].max() - year_data[feature].min())
 
-            y_values = (year_data['Total Households Serviced'] - year_data['Total Households Serviced'].min()) / (
-                    year_data['Total Households Serviced'].max() - year_data['Total Households Serviced'].min())
-
-            create_scatter_plot(axes[i], x_values, y_values, f'Normalized {feature}',
-                                'Normalized Total Households Serviced', year_data['Program Code'],
-                                year_data['Municipal Group'])
+            create_scatter_plot(axes[i], x_values, y_values, 'Normalized Total Households Serviced',
+                                f'Normalized {feature}', year_data['Program Code'])
             axes[i].set_title(f'Year {year}')
             axes[i].grid(False)
 
@@ -335,16 +233,6 @@ visualize_correlation_features(market_agg, unique_years, correlation_features)
 
 # Function to visualize 'Total Households Serviced' vs Operation Cost
 def visualize_households_vs_operation_cost(market_agg, unique_years):
-    """
-    Visualizes the correlation between 'Total Households Serviced' and 'Operation Cost' for each year.
-
-    Args:
-        market_agg (DataFrame): The aggregated market data.
-        unique_years (list): List of unique years.
-
-    Returns:
-        None
-    """
     # Loop through each year
     for year in unique_years:
         year_data = market_agg[market_agg['Year'] == year]
@@ -361,9 +249,9 @@ def visualize_households_vs_operation_cost(market_agg, unique_years):
 
         # Create scatter plot for the current year
         plt.figure(figsize=(8, 6))
-        create_scatter_plot(plt.gca(), normalized_operation_cost, normalized_total_households,
-                            'Normalized Operation Cost', 'Normalized Total Households Serviced',
-                            year_data['Program Code'], year_data['Municipal Group'])
+        create_scatter_plot(plt.gca(), normalized_total_households, normalized_operation_cost,
+                            'Normalized Total Households Serviced', 'Normalized Operation Cost',
+                            year_data['Program Code'])
         plt.title(f'Scatter Plot: Normalized Total Households Serviced vs Normalized Operation Cost - Year {year}')
         plt.tight_layout()
         # Remove the grid
@@ -378,16 +266,6 @@ visualize_households_vs_operation_cost(market_agg, unique_years)
 
 # Function to visualize 'Total Households Serviced per operation cost' vs 'TOTAL Reported and/or Calculated Marketed Tonnes'
 def visualize_households_vs_operation_cost_per_tonnes(market_agg, unique_years):
-    """
-    Visualizes the correlation between 'Total Households Serviced per operation cost' and 'TOTAL Reported and/or Calculated Marketed Tonnes' for each year.
-
-    Args:
-        market_agg (DataFrame): The aggregated market data.
-        unique_years (list): List of unique years.
-
-    Returns:
-        None
-    """
     for year in unique_years:
         year_data = market_agg[market_agg['Year'] == year]
 
@@ -414,8 +292,7 @@ def visualize_households_vs_operation_cost_per_tonnes(market_agg, unique_years):
         plt.figure(figsize=(8, 6))
         create_scatter_plot(plt.gca(), normalized_Total_Households_operation_cost, y_values,
                             'Normalized Total Households Serviced per operation cost',
-                            'Normalized TOTAL Reported and/or Calculated Marketed Tonnes', year_data['Program Code'],
-                            year_data['Municipal Group'])
+                            'Normalized TOTAL Reported and/or Calculated Marketed Tonnes', year_data['Program Code'])
         plt.title(f'Scatter Plot: Normalized Total Households Serviced per operation cost vs '
                   f'Normalized Total Households Serviced per operation cost - Year {year}')
         plt.tight_layout()
@@ -432,17 +309,6 @@ visualize_households_vs_operation_cost_per_tonnes(market_agg, unique_years)
 # Function to visualize the correlation between Total Households Serviced interaction with operation cost
 # and TOTAL Reported and/or Calculated Marketed Tonnes while removing outliers
 def visualize_interaction_with_operation_cost(market_agg, unique_years, threshold=3):
-    """
-    Visualizes the correlation between Total Households Serviced interaction with operation cost and TOTAL Reported and/or Calculated Marketed Tonnes while removing outliers for each year.
-
-    Args:
-        market_agg (DataFrame): The aggregated market data.
-        unique_years (list): List of unique years.
-        threshold (float): Z-score threshold for outlier removal.
-
-    Returns:
-        None
-    """
     for year in unique_years:
         year_data = market_agg[market_agg['Year'] == year].copy()
 
@@ -482,7 +348,7 @@ def visualize_interaction_with_operation_cost(market_agg, unique_years, threshol
                                     year_data['normalized_y_values'],
                                     'Normalized Total Households Serviced * operation cost',
                                     'Normalized TOTAL Reported and/or Calculated Marketed Tonnes',
-                                    year_data['Program Code'], year_data['Municipal Group'])
+                                    year_data['Program Code'])
                 plt.title(f'Scatter Plot: Normalized Total Households Serviced * operation cost vs '
                           f'Normalized Total Households Serviced per operation cost - Year {year} (Outliers Removed)')
                 plt.tight_layout()
@@ -503,17 +369,6 @@ visualize_interaction_with_operation_cost(market_agg, unique_years, threshold=3)
 # Function to visualize the correlation between Change of Total Households Serviced
 # vs Change of TOTAL Reported and/or Calculated Marketed Tonnes
 def visualize_change_correlation(market_agg, unique_years, threshold=0.2):
-    """
-    Visualizes the correlation between the change of Total Households Serviced and the change of TOTAL Reported and/or Calculated Marketed Tonnes for each year.
-
-    Args:
-        market_agg (DataFrame): The aggregated market data.
-        unique_years (list): List of unique years.
-        threshold (float): Threshold for categorizing data points into quadrants.
-
-    Returns:
-        quadrant_data (DataFrame): Combined results of quadrant analysis.
-    """
     # Create a DataFrame to store the quadrant analysis results
     quadrant_data = []
 
@@ -574,9 +429,6 @@ def visualize_change_correlation(market_agg, unique_years, threshold=0.2):
 
         # Append the quadrant analysis results to the DataFrame
         quadrant_data.append(year_data)
-
-        quadrant_counts = year_data['Quadrant'].value_counts()
-        print(quadrant_counts)
 
         # Create scatter plot with point size based on 'Program efficiency'
         fig = px.scatter(year_data, x='change of Households Serviced', y='change of Marketed Tonnes',
