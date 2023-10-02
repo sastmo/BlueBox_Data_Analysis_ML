@@ -1,3 +1,14 @@
+"""
+These scripts provide a comprehensive framework for random feature selection.
+It generates a random value for each column based on the column data type and visualizes the feature importance curve
+for real and random features. It also drops those features which have a lower score than their random counterparts.
+
+Additionally, this code goes even further by evaluating feature importance multiple times
+(controlled by `num_iterations`) to account for variability caused by randomness and statistics.
+It calculates the number of times each feature passes the importance threshold and considers them as
+important features, enhancing the robustness of feature selection.
+"""
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -6,67 +17,91 @@ from matplotlib import pyplot
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.preprocessing import StandardScaler
-# from Data_Model import market_agg
+from statsmodels.stats.outliers_influence import variance_inflation_factor
 import seaborn as sns
 from matplotlib.lines import Line2D
-# from Hyperparameter_tune import best_params
 
 # Load data :
 # Define the file path
-file_path_market_agg = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\market_agg.csv"
+file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\result_classification.csv"
 
 # Read the CSV file into a DataFrame
-market_agg = pd.read_csv(file_path_market_agg)
+recycle_material = pd.read_csv(file_path)
 
 
-# Function to add previous year target as a feature
-def previous_feature_adder(data_set, year_):
+# Function to add the previous year's target as a feature
+def feature_target_selection(data_set, year_):
+    """
+    Selects features and target for a specific year from the dataset.
+
+    Parameters:
+    - data_set (DataFrame): The dataset containing recycling material data.
+    - year_ (int): The year for which features and target are selected.
+
+    Returns:
+    - X_feature_ (DataFrame): Features for the specified year.
+    - y_target_ (Series): Target variable for the specified year.
+    """
+    year_data = data_set[data_set['Year'] == year_]
+
+    # Select columns before the target column
+    y_target_ = year_data['TOTAL Reported and/or Calculated Marketed Tonnes']
+    X_feature_ = year_data.drop(columns=['TOTAL Reported and/or Calculated Marketed Tonnes'])
+
+    return X_feature_, y_target_
+
+
+# Function to add the previous year's target as a feature
+def add_previous_year_target(data_set, year_):
+    """
+    Adds the previous year's target as a feature to the data.
+
+    Args:
+        data_set (DataFrame): Input data.
+        year_ (int): Year for which to add the previous year's target.
+
+    Returns:
+        DataFrame: Data with the 'Previous_Target' feature added.
+    """
     if year_ == 2019:
-        # For the initial year, use mean of target from the same Program Code
+        # For the initial year (2019), use the mean of the target from the same Program Code
         year_data = data_set[data_set['Year'] == year_]
 
-        # Select columns before the target column
-        target_column_index = year_data.columns.get_loc('TOTAL Reported and/or Calculated Marketed Tonnes')
-        X_feature_ = year_data.iloc[:, :target_column_index]
-        y_target_ = year_data['TOTAL Reported and/or Calculated Marketed Tonnes']
+        # Calculate and add the previous year's target as a feature
+        previous_year_avg = data_set.groupby('Program Code')['TOTAL Reported and/or Calculated Marketed Tonnes'].mean()
+        year_data['Previous_Target'] = year_data['Program Code'].map(previous_year_avg)
 
-        # Create a copy of the DataFrame to avoid modifying the original DataFrame
-        X_feature_ = X_feature_.copy()
-
-        # Calculate and add previous year target as a feature
-        pre = data_set.groupby('Program Code')['TOTAL Reported and/or Calculated Marketed Tonnes'].mean()
-        X_feature_['Previous_Target'] = X_feature_['Program Code'].map(pre)
-
-        return X_feature_, y_target_
+        return year_data
     else:
-        # For subsequent years, use previous year's target
+        # For subsequent years, use the previous year's target
         year_data = data_set[data_set['Year'] == year_]
 
-        # Select columns before the target column
-        target_column_index = year_data.columns.get_loc('TOTAL Reported and/or Calculated Marketed Tonnes')
-        X_feature_ = year_data.iloc[:, :target_column_index]
-        y_target_ = year_data['TOTAL Reported and/or Calculated Marketed Tonnes']
-
-        # Create a copy of the DataFrame to avoid modifying the original DataFrame
-        X_feature_ = X_feature_.copy()
-
-        # Calculate and add previous year target as a feature
-        Previous_year = year_ - 1
-        Previous_feature = data_set[data_set['Year'] == Previous_year][
+        # Calculate and add the previous year's target as a feature
+        previous_year = year_ - 1
+        previous_feature = data_set[data_set['Year'] == previous_year][
             ['Program Code', 'TOTAL Reported and/or Calculated Marketed Tonnes']]
 
         # Create a mapping of 'Program Code' to target for the previous year
-        previous_mapping = Previous_feature.set_index('Program Code')[
+        previous_mapping = previous_feature.set_index('Program Code')[
             'TOTAL Reported and/or Calculated Marketed Tonnes'].to_dict()
 
-        # Use the mapping to create the 'Previous_Target' column in X_feature_
-        X_feature_['Previous_Target'] = X_feature_['Program Code'].map(previous_mapping)
+        # Use the mapping to create the 'Previous_Target' column in the data set
+        year_data['Previous_Target'] = year_data['Program Code'].map(previous_mapping)
 
-        return X_feature_, y_target_
+        return year_data
 
 
-# Function to impute previous target values
+# Function to impute missing previous target values
 def impute_previous_target(X_feature_, data_set):
+    """
+    Imputes missing previous target values by taking the mean of the target for the same Program Code.
+
+    Args:
+        data_set (DataFrame): Input data with 'Previous_Target' feature.
+
+    Returns:
+        X_feature_
+    """
     # Create a copy of the DataFrame to avoid modifying the original DataFrame
     X_feature_ = X_feature_.copy()
 
@@ -79,7 +114,19 @@ def impute_previous_target(X_feature_, data_set):
     return X_feature_
 
 
+# Generate random features based on the data type of existing columns in the DataFrame X
 def generate_random_features(X):
+    """
+    Generate Random Features for Given DataFrame.
+
+    This function generates random features based on the data type of existing columns in the DataFrame X.
+
+    Parameters:
+    X (DataFrame): Input DataFrame containing the original features.
+
+    Returns:
+    DataFrame: A new DataFrame with random features added.
+    """
     random_features = pd.DataFrame()
     for column in X.columns:
         if X[column].dtype == bool:
@@ -95,8 +142,20 @@ def generate_random_features(X):
     return pd.concat([X, random_features], axis=1)
 
 
-# Function to evaluate feature importance and select features
+# Function to evaluate and plot feature importance and select features that passed the importance threshold
 def evaluate_feature_importance_addRandomColumn(X_feature, y_target, model):
+    """
+    Evaluate and plot feature importance scores for real features and random features.
+    Drop features that received less score than their random counterparts.
+
+    Parameters:
+    X_feature (DataFrame): Input DataFrame containing the features.
+    y_target (Series): Target variable.
+    model: Machine learning model for feature importance evaluation.
+
+    Returns:
+    list: A list of selected features that passed the importance threshold.
+    """
 
     # Create a copy of the DataFrame to avoid modifying the original DataFrame
     X_feature = X_feature.copy()
@@ -104,10 +163,10 @@ def evaluate_feature_importance_addRandomColumn(X_feature, y_target, model):
     # Drop the 'Year' column from X_feature
     X_feature = X_feature.drop(columns=['Year'])
 
-    # Impute based on the average for NaN values
-    X_feature = impute_previous_target(X_feature, market_agg)
+    # Impute NaN values based on the average of previous targets
+    X_feature = impute_previous_target(X_feature, recycle_material)
 
-    # Reset the index of X before each iteration
+    # Reset the index of X_feature before each iteration
     X_feature.reset_index(drop=True)
 
     # Reset the index of y_target before each iteration
@@ -132,9 +191,8 @@ def evaluate_feature_importance_addRandomColumn(X_feature, y_target, model):
     # Get feature importances
     feature_importances = model.feature_importances_
 
-
     # Plot feature importances
-    '''importance_df = pd.DataFrame(
+    importance_df = pd.DataFrame(
         {'Feature': combined_OriginalRandom_features.columns, 'Importance': feature_importances})
     importance_df = importance_df.sort_values(by=['Feature', 'Importance'], ascending=[False, False])
 
@@ -155,7 +213,7 @@ def evaluate_feature_importance_addRandomColumn(X_feature, y_target, model):
     plt.legend(handles=legend_elements, title='Feature Type')
 
     plt.show()
-'''
+
     # Create a list to store selected features
     selected_features = []
 
@@ -171,9 +229,30 @@ def evaluate_feature_importance_addRandomColumn(X_feature, y_target, model):
     return selected_features
 
 
+# Define a function to evaluate feature importance based on a specified model
 def evaluate_feature_importance_with_frequency(X_feature, y_target, model, feature_importanceModel, num_iterations=20):
+    """
+    Feature Importance Evaluation with Frequency
+
+    This function evaluates feature importance multiple times (controlled by `num_iterations`)
+    to account for variability caused by randomness and statistics. It calculates the number of times each
+    feature passes the importance threshold and considers them as important features, enhancing the robustness
+    of feature selection.
+
+    Parameters:
+    - X_feature (DataFrame): Input DataFrame containing the features.
+    - y_target (Series): Target variable.
+    - model: Machine learning model for feature importance evaluation.
+    - feature_importanceModel: A function for feature importance evaluation.
+    - num_iterations (int): Number of iterations to evaluate feature importance.
+
+    Returns:
+    - list: A list of selected features based on frequency of passing the importance threshold.
+    """
+
     selected_features_frequency = []
 
+    # Loop through iterations for feature importance evaluation
     for _ in range(num_iterations):
         selected_features_ = feature_importanceModel(X_feature, y_target, model)
         selected_features_frequency.append(selected_features_)
@@ -214,6 +293,7 @@ def evaluate_feature_importance_with_frequency(X_feature, y_target, model, featu
         while y_position in [y for _, y in displayed_features]:
             y_position += vertical_spacing
 
+        # Add vertical line and label for each feature
         pyplot.axvline(x_position, color=color)
         pyplot.text(x_position, y_position, feature)
         displayed_features.add((feature, y_position))  # Keep track of displayed features and their positions
@@ -221,8 +301,7 @@ def evaluate_feature_importance_with_frequency(X_feature, y_target, model, featu
     # Create a legend
     legend_labels = ['Highly Significant', 'Not Significant']
     legend_colors = ['green', 'red']
-    legend_patches = [pyplot.Line2D([0], [0], color=color, label=label) for color, label in
-                      zip(legend_colors, legend_labels)]
+    legend_patches = [pyplot.Line2D([0], [0], color=color, label=label) for color, label in zip(legend_colors, legend_labels)]
     pyplot.legend(handles=legend_patches, loc='upper right')
 
     # Show the plot
@@ -234,20 +313,18 @@ def evaluate_feature_importance_with_frequency(X_feature, y_target, model, featu
 # Best Hyperparameters resulted form Hyperparameter tuning
 best_params = {'bootstrap': True, 'max_depth': 80, 'min_samples_leaf': 1, 'min_samples_split': 3, 'n_estimators': 400}
 
-# Create a regression model
-model = RandomForestRegressor(**best_params)
-
 # Get unique years from the data
-unique_years = market_agg['Year'].unique()
+unique_years = recycle_material['Year'].unique()
 
 # Create an empty dictionary to store selected features for each year
 selected_features_dict = {}
 
 # Iterate through each year
+# Iterate through each year
 for year in unique_years:
-    if year < 2021:  # Condition to limit the loop
+    if year == 2020:  # Condition to limit the loop
         # Add previous year target and operation cost as additional features
-        X_feature, y_target = previous_feature_adder(market_agg, year)
+        X_feature, y_target = feature_target_selection(recycle_material, year)
 
         # Create a regression model
         model = RandomForestRegressor(**best_params)
@@ -258,11 +335,5 @@ for year in unique_years:
         # evaluate feature importance based on frequency
         evaluate_feature_importance_with_frequency(X_feature, y_target, model, evaluate_feature_importance_addRandomColumn)
 
-
-"""
-['Total Households Serviced', 'Single Family Dwellings', 'Full User Pay', 'Bag Limit Program for Garbage Collection',
- 'Municipal Group', 'Single Stream', 'Residential Promotion & Education Costs', 'Program efficiency', 'Interest on Municipal  Capital', 
- 'Total Gross Revenue', 'Interaction of Households Serviced and operation cost', 'operation cost', 'Previous_Target']
-"""
 
 
