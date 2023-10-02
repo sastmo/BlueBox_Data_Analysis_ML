@@ -379,6 +379,9 @@ def main_visualization(dataset, year_):
                                     'Program efficiency', 'Single Family Dwellings',
                                     'User Pay Waste Collection (Pay-As-You-Throw)'], axis=1)
 
+    # Call the function to visualize t-SNE divergence vs perplexity
+    visualize_tsne_divergence(revised_dataset, year_)
+
     # Create an instance of StandardScaler to standardize the data
     scaler = StandardScaler()
 
@@ -473,4 +476,3 @@ file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\result_classification.c
 # Save the 'result_classification_df' DataFrame to the specified file path using "with" statement
 with open(file_path, 'w', newline='') as file:
     result_classification_df.to_csv(file, index=False)
-
