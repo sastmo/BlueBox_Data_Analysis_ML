@@ -1,16 +1,71 @@
+"""
+Boruta Feature Selection on Top of Random Feature Selection
+
+# Main Goal:
+This script performs Boruta feature selection, enhancing the reliability of feature selection by iterating
+multiple times to identify important features based on shadow comparisons and visualize the results.
+
+# Steps and Functions:
+1. Data Loading and Manipulation: Load data, append key columns, and prepare the dataset.
+2. Shadow Feature Creation: Generate shadow features by shuffling data columns.
+3. Boruta Feature Selection with Iteration: Iteratively evaluate feature importances and accumulate hits.
+4. Visualization: Plot results and categorize features as "Highly Significant" or "Not Significant."
+
+This script aids in optimal feature selection for machine learning tasks.
+"""
+
 import numpy as np
 import pandas as pd
 import scipy as sp
 from matplotlib import pyplot, pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
-# from Data_Model import market_agg
-import xgboost as xgb
-# from Feature_Selection import previous_feature_adder, impute_previous_target
 
 
-# from Feature_Selection import selected_features_v1
+# Function to load and manipulate data
+def load_and_manipulate_data(file_path, selected_features):
+    """
+    Load and manipulate data from a CSV file.
+
+    This function reads the CSV file located at 'file_path' into a DataFrame, appends new columns
+    ('Year', 'Program Code', 'TOTAL Reported and/or Calculated Marketed Tonnes') to 'selected_features',
+    and selects columns based on the updated 'selected_features'.
+
+    Parameters:
+    file_path (str): Path to the CSV file containing the data.
+    selected_features (list): List of selected features for analysis.
+
+    Returns:
+    DataFrame: Manipulated DataFrame containing selected features and additional columns.
+    """
+    # Read the CSV file into a DataFrame
+    clustered_data = pd.read_csv(file_path)
+
+    # Append the new columns to selected_features_v1
+    columns_to_add = ['Year', 'Program Code', 'TOTAL Reported and/or Calculated Marketed Tonnes']
+    selected_features_v2_extend = selected_features + columns_to_add
+
+    # Select columns based on the first version of feature selection
+    data_set = clustered_data.loc[:, clustered_data.columns.isin(selected_features_v2_extend)]
+
+    return data_set
+
+
+# Function to add the previous year's target as a feature
 def previous_feature_adder(data_set, year_):
+    """
+    Add Previous Year's Target as a Feature
+
+    This function adds the previous year's target as a feature to the dataset based on the specified year.
+
+    Parameters:
+    - data_set (DataFrame): Input DataFrame containing the data.
+    - year_ (int): The year for which the previous year's target should be added as a feature.
+
+    Returns:
+    - X_feature_ (DataFrame): Updated DataFrame with the previous year's target as a feature.
+    - y_target_ (Series): Target variable for the specified year.
+    """
     if year_ == 2019:
         # For the initial year, use mean of target from the same Program Code
         year_data = data_set[data_set['Year'] == year_]
@@ -57,6 +112,19 @@ def previous_feature_adder(data_set, year_):
 
 # Function to impute previous target values
 def impute_previous_target(X_feature_, data_set):
+    """
+    Impute Previous Year's Target Values
+
+    This function imputes missing values in the 'Previous_Target' column using the mean target value
+    for the corresponding 'Program Code' from the provided dataset.
+
+    Parameters:
+    - X_feature_ (DataFrame): Input DataFrame containing the features.
+    - data_set (DataFrame): Dataset containing the target variable used for imputation.
+
+    Returns:
+    - X_feature_ (DataFrame): Updated DataFrame with imputed 'Previous_Target' values.
+    """
     # Create a copy of the DataFrame to avoid modifying the original DataFrame
     X_feature_ = X_feature_.copy()
 
@@ -69,48 +137,64 @@ def impute_previous_target(X_feature_, data_set):
     return X_feature_
 
 
-# Load data :
-# Define the file path
-file_path_market_agg = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\market_agg.csv"
-
-# Read the CSV file into a DataFrame
-market_agg = pd.read_csv(file_path_market_agg)
-
-selected_features_v1 = np.array(['Total Households Serviced', 'Single Family Dwellings', 'Full User Pay',
-                                 'Bag Limit Program for Garbage Collection',
-                                 'Municipal Group', 'Single Stream', 'Residential Promotion & Education Costs',
-                                 'Program efficiency', 'Interest on Municipal  Capital',
-                                 'Total Gross Revenue', 'Interaction of Households Serviced and operation cost',
-                                 'operation cost', 'Previous_Target']
-                                )
-# Columns to add
-columns_to_add = np.array(['Year', 'Program Code', 'TOTAL Reported and/or Calculated Marketed Tonnes'])
-
-# Append the new columns to selected_features_v1
-selected_features_v1_extend = np.append(selected_features_v1, columns_to_add)
-
-# Use loc to select columns based on the first version of feature selection
-selected_features_df = market_agg.loc[:, market_agg.columns.isin(selected_features_v1_extend)]
-
-
 # Helper function to create shadow features
 def _create_shadow(x):
+    """
+    Create Shadow Features for the Given DataFrame.
+
+    This function generates shadow features by shuffling the values of each column in the input DataFrame x.
+
+    Parameters:
+    x (DataFrame): Input DataFrame containing original features.
+
+    Returns:
+    DataFrame: A new DataFrame with shadow features added.
+    list: Names of the shadow features.
+    """
+
     x_shadow = x.copy()
+
+    # Shuffle the values of each column to create shadow features
     for c in x_shadow.columns:
         np.random.shuffle(x_shadow[c].values)
+
+    # Create names for shadow features
     shadow_names = ["shadow_feature_" + str(i + 1) for i in range(x.shape[1])]
+
+    # Rename columns with shadow feature names
     x_shadow.columns = shadow_names
+    # Function to evaluate feature importance and select features
+
+    # Concatenate the original features with the shadow features
     x_new = pd.concat([x, x_shadow], axis=1)
+
     return x_new, shadow_names
 
 
-# Function to evaluate feature importance and select features
+# Function to perform Boruta feature selection
 def boruta_feature_selection(X_feature, y_target, model, num_iterations=20):
+    """
+    Boruta Feature Selection Method with Iteration
+
+    This function performs feature selection using the Boruta method with multiple iterations.
+    It calculates feature importances for both original features and shadow features created by shuffling data,
+    and identifies important features that surpass a shadow threshold.
+    It also visualizes the process and results.
+
+    Parameters:
+    - X_feature (DataFrame): Input DataFrame containing the features.
+    - y_target (Series): Target variable.
+    - model: Machine learning model for feature importance evaluation.
+    - num_iterations (int): Number of iterations to evaluate feature importance.
+
+    Returns:
+    - list: A list of selected features based on the Boruta method.
+    """
     # Create a copy of the DataFrame to avoid modifying the original DataFrame
     X_feature = X_feature.copy()
 
     # Impute based on the average for NaN values
-    X_feature = impute_previous_target(X_feature, market_agg)
+    X_feature = impute_previous_target(X_feature, recycle_material)
 
     print(X_feature[X_feature['Program efficiency'].isna()])
 
@@ -219,14 +303,28 @@ def boruta_feature_selection(X_feature, y_target, model, num_iterations=20):
     pyplot.show()
 
 
-# Best Hyperparameters resulted form Hyperparameter tuning
-best_params = {'bootstrap': True, 'max_depth': 90, 'min_samples_leaf': 1, 'min_samples_split': 4, 'n_estimators': 489}
+# Load data :
+# Define the file path
+file_path_market_agg = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\market_agg.csv"
 
-# Create a regression model
-model = RandomForestRegressor(**best_params)
+# List of selected features from the first level of feature selection (Importance + Random Features)
+selected_features_v1 = np.array(['Total Households Serviced', 'Single Family Dwellings', 'Full User Pay',
+                                 'Bag Limit Program for Garbage Collection',
+                                 'Municipal Group', 'Single Stream', 'Residential Promotion & Education Costs',
+                                 'Program efficiency', 'Interest on Municipal  Capital',
+                                 'Total Gross Revenue', 'Interaction of Households Serviced and operation cost',
+                                 'operation cost', 'Previous_Target']
+                                )
+
+# Call the function to load and manipulate the data
+recycle_material = load_and_manipulate_data(file_path_market_agg, selected_features_v1)
+
+
+# Best Hyperparameters resulted form Hyperparameter tuning
+best_params = {'bootstrap': True, 'max_depth': 80, 'min_samples_leaf': 1, 'min_samples_split': 3, 'n_estimators': 400}
 
 # Get unique years from the data
-unique_years = market_agg['Year'].unique()
+unique_years = recycle_material['Year'].unique()
 
 # Create an empty dictionary to store selected features for each year
 selected_features_dict = {}
@@ -235,8 +333,8 @@ selected_features_dict = {}
 for year in unique_years:
     if year < 2021:  # Condition to limit the loop
         # Add previous year target and operation cost as additional features
-        selected_features_df = selected_features_df.copy()
-        X_feature, y_target = previous_feature_adder(selected_features_df, year)
+        selected_features_df = recycle_material.copy()
+        X_feature, y_target = previous_feature_adder(recycle_material, year)
 
         # Reset the index of X before each iteration
         X_feature.reset_index(drop=True)
@@ -250,20 +348,3 @@ for year in unique_years:
         # Call the function to evaluate feature importance and select features
         boruta_feature_selection(X_feature, y_target, model)
 
-'''
-Total Hits Over Iterations:
-                                                   var  total hits in iteration
-0                           Total Households Serviced                     20.0
-1                             Single Family Dwellings                     18.0
-2                                       Full User Pay                      0.0
-3            Bag Limit Program for Garbage Collection                      0.0
-4                                     Municipal Group                     20.0
-5                                       Single Stream                      0.0
-6             Residential Promotion & Education Costs                     20.0
-7                      Interest on Municipal  Capital                     19.0
-8                                 Total Gross Revenue                     20.0
-9   Interaction of Households Serviced and operati...                     20.0
-10                                     operation cost                     20.0
-11                                 Program efficiency                      6.0
-12                                    Previous_Target                     20.0
-'''
