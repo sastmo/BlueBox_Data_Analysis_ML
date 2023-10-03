@@ -1,3 +1,18 @@
+"""
+Observation-Level Feature Importance Script
+
+This script leverages the combined power of TreeInterpreter and LIME to unveil the importance of features at
+the observation level. Gain insights into how each feature influences model predictions for individual data points.
+
+Methods Used:
+- TreeInterpreter: Dive deep into model decision-making by calculating feature contributions for each row.
+- LIME (Local Interpretable Model-agnostic Explanations): Craft localized feature importance explanations with visualizations.
+
+Key Benefits:
+- Optimize your models by understanding feature impacts.
+- Improve precision and model understanding.
+- Decode hidden secrets within your dataset.
+"""
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -39,6 +54,10 @@ def load_and_manipulate_data(file_path, selected_features_v1):
 def analyze_feature_contributions_treeinterpreter(model, X_train_scaled2, X_feature, program_codes_for_compression):
     """
     Analyze feature contributions for a machine learning model using TreeInterpreter.
+    This function analyzes the feature contributions of a machine learning model at an individual observation level.
+    It calculates and interprets feature contributions for each row of data, providing insights into how each feature
+    affects the model's predictions. Additionally, it identifies the key features that contribute to the difference
+    between two specified data points.
 
     Args:
         model (object): The trained machine learning model.
@@ -73,9 +92,22 @@ def analyze_feature_contributions_treeinterpreter(model, X_train_scaled2, X_feat
 
 # 2.Observation Level Feature Importance using LIME (Local Interpretable Model-agnostic Explanations)
 def analyze_feature_contributions_LIME(model, X_train_, X_feature, program_codes_for_compression):
+    """
+    Analyze feature contributions at the observation level using LIME (Local Interpretable Model-agnostic Explanations).
+    This function analyzes feature contributions at the observation level using LIME (Local Interpretable Model-agnostic Explanations).
+    It creates a LimeTabularExplainer to explain the importance of features for each observation in the dataset.
+    The explanations are generated for a set of specified program codes, providing insights into feature impact
+    for individual data points. Explanations are presented as text and visualized using pyplot figures.
 
+    Args:
+        model (object): The trained machine learning model.
+        X_train_ (array-like): The scaled training data.
+        X_feature (DataFrame): The feature data.
+        program_codes_for_compression (list): List of program codes for analysis.
+    """
     X_train = pd.DataFrame(X_train_)
     X_train.columns = X_feature.columns
+
     # Create a LimeTabularExplainer
     explainer = lime.lime_tabular.LimeTabularExplainer(X_train.values,
                                                        mode='regression',
@@ -109,7 +141,7 @@ def analyze_feature_contributions_LIME(model, X_train_, X_feature, program_codes
 
 
 # Define the file path
-file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\market_agg.csv"
+file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\result_classification.csv"
 
 # Define the selected features list
 selected_features_v1 = [
