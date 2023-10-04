@@ -77,9 +77,9 @@ parameters_2 = ['Total Gross Revenue', 'operation cost']
 parameters_3 = ['Total Households Serviced', 'TOTAL Reported and/or Calculated Marketed Tonnes']
 
 # Plot grouped bar charts
-plot_grouped_bar_chart(classified_data, parameters_1)
-plot_grouped_bar_chart(classified_data, parameters_2)
-plot_grouped_bar_chart(classified_data, parameters_3)
+#plot_grouped_bar_chart(classified_data, parameters_1)
+#plot_grouped_bar_chart(classified_data, parameters_2)
+#plot_grouped_bar_chart(classified_data, parameters_3)
 
 
 # Function to plot grouped bar charts for cluster analysis based on quadrants
@@ -132,7 +132,7 @@ def plot_quadrant_counts(data, cluster_gap=0.5):
 
 
 # Plot quadrant counts
-plot_quadrant_counts(classified_data)
+#plot_quadrant_counts(classified_data)
 
 
 def plot_cluster_counts_by_year(data):
@@ -161,10 +161,10 @@ def plot_cluster_counts_by_year(data):
 
 
 # Plot cluster counts by year
-plot_cluster_counts_by_year(classified_data)
+#plot_cluster_counts_by_year(classified_data)
 
 
-def plot_Bag_Limit_Program_counts_by_year(data):
+def plot_selected_feature_counts_by_year(data, feature):
     """
     Plot the count of data points with Bag Limit Program for Garbage Collection in each cluster for each year.
 
@@ -179,18 +179,25 @@ def plot_Bag_Limit_Program_counts_by_year(data):
     for year in years:
         year_data = data[data['Year'] == year]
         bag_limited_counts = year_data.groupby('Cluster_Labels')[
-            'Bag Limit Program for Garbage Collection'].sum().sort_index()
+            feature].sum().sort_index()
 
         plt.figure(figsize=(10, 6))
         plt.bar(bag_limited_counts.index, bag_limited_counts.values, color='skyblue')
         plt.xlabel('Cluster Labels')
         plt.ylabel('Count')
-        plt.title(f'Count of Bag Limit Program for Garbage Collection in Each Cluster for Year {year}')
+        plt.title(f'Count of {feature} in Each Cluster for Year {year}')
         plt.xticks(bag_limited_counts.index)
         plt.show()
 
 
-# Plot Bag Limit Program counts by year
-plot_Bag_Limit_Program_counts_by_year(classified_data)
+# Plot Full User Pay counts by year
+plot_selected_feature_counts_by_year(classified_data, 'Full User Pay')
+
+# Plot Single Stream counts by year
+plot_selected_feature_counts_by_year(classified_data, 'Single Stream')
+
+# Plot Bag Limit Program for Garbage Collection counts by year
+plot_selected_feature_counts_by_year(classified_data, 'Bag Limit Program for Garbage Collection')
+
 
 
