@@ -5,6 +5,7 @@
 [![Machine Learning](https://img.shields.io/badge/Machine%20Learning-Enabled-blue.svg)](https://en.wikipedia.org/wiki/Machine_learning)
 [![Data Clustering](https://img.shields.io/badge/Data%20Clustering-Clustering-lightgrey)](https://en.wikipedia.org/wiki/Cluster_analysis)
 [![HDBSCAN](https://img.shields.io/badge/HDBSCAN-Clustering-blue)](https://hdbscan.readthedocs.io/en/latest/)
+[![Hyperparameter Tuning](https://img.shields.io/badge/Hyperparameter%20Tuning-Method-blue.svg)](https://en.wikipedia.org/wiki/Hyperparameter_tuning)
 [![Random Forest](https://img.shields.io/badge/Random%20Forest-Modeling-brightgreen)](https://en.wikipedia.org/wiki/Random_forest)
 [![Gradient Boost](https://img.shields.io/badge/Gradient%20Boost-Modeling-yellowgreen)](https://en.wikipedia.org/wiki/Gradient_boosting)
 [![Regression](https://img.shields.io/badge/Regression-Modeling-green)](https://en.wikipedia.org/wiki/Regression_analysis)
