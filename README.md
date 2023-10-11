@@ -53,3 +53,20 @@ Our mission is clear: create a comprehensive data analysis framework from start 
 **Data Model in Power BI:** The data model is available as a Power BI (pbix) file in the `PowerBI_Visualization_Blue_Box` folder within this repository.
 
 **Extended Details:** For more in-depth information about this section, please visit my portfolio pages: [Data Model and Data Manipulation](https://tasteful-background-b30.notion.site/1-Data-Model-ce06ad4af58346cb98e853fe997345cb?pvs=4)
+
+### 📊 **2. Data Visualization with Power BI**
+
+Explore Material Collections: 2019 vs. 2021 - Changes by Category
+
+![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/6f4d9cab-5b91-4927-a270-7334cb0331e8)
+
+
+Welcome to the captivating world of **Data Visualization with Power BI**!
+
+In this section, we leverage the power of Power BI to transform our meticulously prepared data into stunning visuals that vividly convey our discoveries. We pose essential questions at the heart of our exploration and use Data Analysis Expressions (DAX) to craft responses within Power BI visuals.
+
+🌍 These visuals provide a high-level overview of waste management and recyclable materials data, painting a vivid picture of the program's scope across the nation. Throughout this process, we've uncovered valuable insights that have the potential to shape decisions and influence the future of this essential work.
+
+💼 As you reach this point, I'm thrilled to see you progressing on this enlightening journey. Together, we've gained a broader understanding of the program's reach and the materials it handles. Notably, we've identified policies that are making a positive impact, and we've unveiled strong relationships between key parameters. 📈🤝
+
+**Power BI Dashboard:** The data model is available as a Power BI (pbix) file in the `PowerBI_Visualization_Blue_Box` folder within this repository.
