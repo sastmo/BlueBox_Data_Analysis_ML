@@ -114,7 +114,7 @@ Buckle up as we explore Data Clustering with the power of HDBSCAN, a highly accu
 **For more information about this section, please visit this page**: [Data Clustering](https://tasteful-background-b30.notion.site/4-Data-Clustering-1f3fc49ed986428c806098c6555dda78?pvs=4)
 
 
-### 👨‍🔧 **5. Hyperparameter Tuning**
+## 👨‍🔧 **5. Hyperparameter Tuning**
 
 Stability Assessment: Out-of-Bag Error Rate for Random Forest
 
@@ -135,7 +135,7 @@ Buckle up, as we prepare to venture into the next thrilling chapter—the captiv
 **For more in-depth information about this section, please visit this page:** [Hyperparameter Tuning](https://tasteful-background-b30.notion.site/5-Hyperparameter-Tuning-89e48769a75d45f69d560d64a2787596?pvs=4)
 
 
-### 📊 **6. Feature Analysis**
+## 📊 **6. Feature Analysis**
 
 Feature Selection Analysis: Prioritizing Important Features by Frequency
 
@@ -152,12 +152,11 @@ Our journey has been a thrilling rollercoaster, filled with discoveries and insi
 **For more in-depth information about this section, please visit this page:** [Feature Analysis](https://tasteful-background-b30.notion.site/6-Feature-Analysis-cb998fe7a17c4446b72d206fad7d03ec?pvs=4)
 
 
-### 💫 **7. Local Feature Selection**
+## 💫 **7. Local Feature Selection**
 
 Local Feature Selection for Noise Cluster (-1)
 
 ![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/36031e43-dc77-431c-a7da-ad3cba48e279)
-
 
 Welcome to Section 7 of our exhilarating journey! From the inception of this data analysis project to the in-depth exploration of various facets of the Blue Box Program, it's incredible to see how far we've come. As we delve into Section 7, we're entering a pivotal phase that promises to bring us even closer to unraveling the program's mysteries.
 
@@ -174,3 +173,33 @@ As we embark on this captivating expedition into local feature selection, we ext
 **Related Scripts for Observation Level:** `Local_Feature_Selection_Observation_Level.py`
 
 **For more in-depth information about this section, please visit this page:** [Local Feature Selection](https://www.notion.so/7-Local-Feature-Selection-599e6ea05a9e43eab629f7e9192d003a)
+
+
+## 🌱 🌱 **8. Gradient Boosting Regressor**
+
+Partial Dependency Analysis for 2021
+
+![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/471660b2-0b46-4502-8d95-55d6d6661de3)
+
+Our path thus far has been paved with challenges and discoveries, and now we stand at the threshold of our grand finale. Throughout our journey, we've meticulously prepared, analyzed, and transformed our data, gaining valuable insights into the intricate workings of the Blue Box Program.
+
+In this final section, we embark on a thrilling adventure into the world of machine learning with a focus on Gradient Boosting Regression. Our goal is crystal clear: we aim to develop a powerful predictive model that will forecast the collected waste material for the next year—a pivotal task with real-world implications. 📈🔍
+
+With our journey coming to an end, I want to express my gratitude for joining us on this incredible adventure. Together, we've uncovered insights and patterns within the Blue Box Program data that have the potential to make a meaningful impact. As we explore Gradient Boosting Regression, we're on the cusp of delivering a powerful predictive model that will contribute to the program's success.
+
+Thank you for being part of this journey, and I invite you to dive deep into this section for a captivating finale. 🌟📊
+
+**Related Scripts:** `GradientBoostingClass.py` and `GradientBoostRegression.py`
+
+**For more in-depth information about this section, please visit this page:** [Gradient Boosting Regressor](https://www.notion.so/8-GradientBoostingRegressor-ca74e6e8c17d4ea3b2972d4c57649c84?pvs=4)
+
+
+## 🌐 **Conclusion and Invitation: Continuing the Data-Driven Odyssey**
+
+I extend a warm and enthusiastic invitation to embark on this captivating data-driven odyssey with me. In this journey, we'll explore the dynamic interplay between simplicity and complexity, and let our curiosity be our guiding star. Together, we'll navigate the intricate landscape of waste management, unearthing precious insights that have the power to shape a more sustainable future. 🌱🌟
+
+Our expedition has taken us through the intricate layers of a comprehensive framework for data analysis programs. We've ventured from the foundational construction of data models to the meticulous enhancement of data quality through cleaning and standardization. We've harnessed the might of Power BI for data visualization, delved deep into the realms of exploratory data analysis, and embarked on an exploration of data clustering. We've meticulously crafted machine learning models tailored to the program's unique nature, fine-tuned hyperparameters using a variety of approaches to minimize uncertainty, and scrutinized features at multiple levels of granularity. Our ultimate achievement is the development of a potent Gradient Boosting-based regression model. Your active participation has been an invaluable part of this journey. 🚀✨
+
+Now, with a sense of fulfillment and curiosity still ablaze, I invite you to stay engaged and follow along as we continue our exploration into the ever-evolving world of data analysis. There are more exciting adventures ahead, waiting to be unraveled, and your presence adds depth and significance to this ongoing odyssey. 🌟📊📈 Join me as we continue this data-driven quest for knowledge and discovery.
+
+[Explore the full project details here](https://tasteful-background-b30.notion.site/Exploratory-Data-Analysis-EDA-of-the-Canada-Blue-Box-Program-d5ff354b53664c3b8d0d4091f65a336c?pvs=4)
