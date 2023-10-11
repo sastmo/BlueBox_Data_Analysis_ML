@@ -35,7 +35,8 @@ Together, let's dive in and unlock the potential of this data-driven exploration
 7. 💫 **Local Feature Selection**
 8. 🌱🌱 **GradientBoostingRegressor**
 
-### 🔧 **1. Data Model and Data Manipulation**
+
+## 🔧 **1. Data Model and Data Manipulation**
 ![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/028f30ab-bca8-4b47-a6b9-7263c289c346)
 
 In this section, we delve into the world of data modeling and manipulation to lay the foundation for our comprehensive data analysis framework.
@@ -54,7 +55,7 @@ Our mission is clear: create a comprehensive data analysis framework from start 
 
 **Extended Details:** For more in-depth information about this section, please visit my portfolio pages: [Data Model and Data Manipulation](https://tasteful-background-b30.notion.site/1-Data-Model-ce06ad4af58346cb98e853fe997345cb?pvs=4)
 
-### 📊 **2. Data Visualization with Power BI**
+## 📊 **2. Data Visualization with Power BI**
 
 Explore Material Collections: 2019 vs. 2021 - Changes by Category
 
