@@ -5,7 +5,6 @@
 [![Machine Learning](https://img.shields.io/badge/Machine%20Learning-Enabled-blue.svg)](https://en.wikipedia.org/wiki/Machine_learning)
 [![Data Clustering](https://img.shields.io/badge/Data%20Clustering-Clustering-lightgrey)](https://en.wikipedia.org/wiki/Cluster_analysis)
 [![HDBSCAN](https://img.shields.io/badge/HDBSCAN-Clustering-blue)](https://hdbscan.readthedocs.io/en/latest/)
-[![t-SNE](https://img.shields.io/badge/t-SNE-Visualization-orange)](https://scikit-learn.org/stable/modules/manifold.html#t-sne)
 [![Random Forest](https://img.shields.io/badge/Random%20Forest-Modeling-brightgreen)](https://en.wikipedia.org/wiki/Random_forest)
 [![Gradient Boost](https://img.shields.io/badge/Gradient%20Boost-Modeling-yellowgreen)](https://en.wikipedia.org/wiki/Gradient_boosting)
 [![Regression](https://img.shields.io/badge/Regression-Modeling-green)](https://en.wikipedia.org/wiki/Regression_analysis)
