@@ -36,25 +36,20 @@ Together, let's dive in and unlock the potential of this data-driven exploration
 8. 🌱🌱 **GradientBoostingRegressor**
 
 ### 🔧 **1. Data Model and Data Manipulation**
+![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/028f30ab-bca8-4b47-a6b9-7263c289c346)
+
+In this section, we delve into the world of data modeling and manipulation to lay the foundation for our comprehensive data analysis framework.
+
+Our mission is clear: create a comprehensive data analysis framework from start to finish, covering data cleaning, preparation, feature analysis, and regression modeling.
+
+📈 It all begins here with data manipulation. Using Power Query, we carefully cleaned and merged datasets from 2019, 2020, and 2021, ensuring our data was ready for analysis. A Star Schema data model was crafted by defining primary and foreign keys within the datasets.
+
+🗺️ To enrich our analysis, we incorporated geolocation and demographic data from CSV files, adding a valuable layer of context. Python played a role in data refinement and matching, maintaining accuracy through the use of fuzzy logic.
+
+🚀 Join me as we move forward to uncover thrilling Power BI data visualizations and unveil the mesmerizing tapestry of data patterns. Your journey into the world of data-driven insights is about to get even more exciting!
 
 **Related Scripts:** The scripts used for this section can be found in the file `Data_Model.py` in this repository.
 
 **Data Model in Power BI:** The data model is available as a Power BI (pbix) file in the `PowerBI_Visualization_Blue_Box` folder within this repository.
 
 **Extended Details:** For more in-depth information about this section, please visit my portfolio pages: [Data Model and Data Manipulation](https://tasteful-background-b30.notion.site/1-Data-Model-ce06ad4af58346cb98e853fe997345cb?pvs=4)
-
-Data Modeling using Star Schema 
-
----
-
-https://www.notion.so/1-Data-Model-ce06ad4af58346cb98e853fe997345cb?pvs=4#4f93cf892632403ca016117f4e7a41c1
-
-In this journey, we're exploring a vast dataset that holds the secrets of waste management and recyclable materials across our nation. 🌍♻️
-
-Our mission is clear: create a comprehensive data analysis framework from start to finish, covering data cleaning, preparation, feature analysis, and regression modeling.
-
-📈 It all begins here with data manipulation. Using Power Query, we carefully cleaned, and merged datasets from 2019, 2020, and 2021, ensuring our data was ready for analysis. A Star Schema data model was crafted by defining primary and foreign keys within the datasets.
-
-🗺️ To enrich our analysis, we incorporated geolocation and demographic data from CSV files, adding a valuable layer of context. Python played a role in data refinement and matching, maintaining accuracy through the use of fuzzy logic. 
-
-🚀 Join me as we move forward to uncover thrilling Power BI data visualizations and unveil the mesmerizing tapestry of data patterns. Your journey into the world of data-driven insights is about to get even more exciting!
