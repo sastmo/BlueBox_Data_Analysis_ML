@@ -35,4 +35,19 @@ Together, let's dive in and unlock the potential of this data-driven exploration
 7. 💫 **Local Feature Selection**
 8. 🌱🌱 **GradientBoostingRegressor**
 
-![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/01e91b5c-42e1-40b3-ade0-51b14437cc0f)
+### 🔧 **1. Data Model and Data Manipulation**
+
+**Data Modeling using Star Schema**
+
+![Data Model](https://prod-files-secure.s3.us-west-2.amazonaws.com/3eb2ed49-1d0b-425d-b14f-22f236298e86/0b5dec87-6280-4de7-a34c-099a7dc426e4/Data_Model.png)
+
+Welcome to the heart of our data analysis adventure! In this section, we'll embark on a journey through a vast dataset that reveals the intricacies of waste management and recyclable materials across our nation. 🌍♻️
+
+Our mission is crystal clear: to build a comprehensive data analysis framework that encompasses everything from data cleaning and preparation to feature analysis and regression modeling.
+
+📈 It all begins here with data manipulation. We've meticulously employed Power Query to clean, merge, and shape datasets from the years 2019, 2020, and 2021, ensuring that our data is primed for analysis. We've even gone a step further by crafting a Star Schema data model, defining primary and foreign keys within our datasets.
+
+🗺️ To enhance our analysis, we've seamlessly integrated geolocation and demographic data from CSV files, providing a valuable layer of context. Python has played a pivotal role in data refinement and matching, employing fuzzy logic to maintain data accuracy.
+
+🚀 Join us on this exciting journey as we progress towards unveiling thrilling Power BI data visualizations and revealing the mesmerizing tapestry of data patterns. Your voyage into the realm of data-driven insights is about to become even more captivating!
+
