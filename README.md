@@ -109,4 +109,4 @@ Buckle up as we explore Data Clustering with the power of HDBSCAN, a highly accu
 
 **Related Files:** `Clustering(HDBSCAN)_Visualization(t_SNE).py`
 
-**For more information about this section, please visit this page: [Data Clustering](https://tasteful-background-b30.notion.site/4-Data-Clustering-1f3fc49ed986428c806098c6555dda78?pvs=4)**
+**For more information about this section, please visit this page**: [Data Clustering](https://tasteful-background-b30.notion.site/4-Data-Clustering-1f3fc49ed986428c806098c6555dda78?pvs=4)
