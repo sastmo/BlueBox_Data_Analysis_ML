@@ -107,6 +107,28 @@ In our pursuit of understanding what distinguishes regions with efficient materi
 
 Buckle up as we explore Data Clustering with the power of HDBSCAN, a highly accurate clustering method, and visualize these clusters in two dimensions using t-SNE. This promises to be an electrifying session that will reveal insights like never before! 🚀📊
 
-**Related Files:** `Clustering(HDBSCAN)_Visualization(t_SNE).py`
+**Related Scripts:** `Clustering(HDBSCAN)_Visualization(t_SNE).py`
 
 **For more information about this section, please visit this page**: [Data Clustering](https://tasteful-background-b30.notion.site/4-Data-Clustering-1f3fc49ed986428c806098c6555dda78?pvs=4)
+
+
+### 👨‍🔧 **5. Hyperparameter Tuning**
+
+Stability Assessment: Out-of-Bag Error Rate for Random Forest
+
+![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/f887f8b1-eb09-4fda-8817-b3bd52bb826c)
+
+In this section, we embark on the vital journey of fine-tuning machine learning models—an indispensable step to ensure the precision and accuracy of our analysis results. 🛠️
+
+As you delve into this chapter, you'll uncover the profound importance of hyperparameter tuning. Originally conceived as an integral part of our Global Feature Analysis, its significance magnified as our analysis evolved. Observe how we meticulously adjust parameters to optimize our model's performance.
+
+Our framework adeptly navigates complex challenges like multicollinearity, employing Randomized Search and Grid Search in tandem to fine-tune hyperparameters. The ultimate result is a rock-solid foundation for our analysis, substantiated by the insightful OOB Error vs. Number of Estimators graph. 📈
+
+I warmly invite you to join me on this journey, whether you are already well-versed in hyperparameter tuning or simply seeking valuable data analysis insights. Your presence has been invaluable, and I assure you that this exploration promises significant returns. 🚀
+
+Buckle up, as we prepare to venture into the next thrilling chapter—the captivating world of data analysis! 🚀 In the upcoming leg of our expedition, we will delve deeply into feature analysis, both on a global scale and with a local focus. Our goal is to discern the differences between high-performing programs and those in need of improvement.
+
+**Related Scripts:** `Hyperparameter-tuning.py`
+
+**For more in-depth information about this section, please visit this page:** [Hyperparameter Tuning](https://tasteful-background-b30.notion.site/5-Hyperparameter-Tuning-89e48769a75d45f69d560d64a2787596?pvs=4)
+
