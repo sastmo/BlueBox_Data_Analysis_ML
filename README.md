@@ -89,8 +89,24 @@ In this captivating expedition, we've delved deep into the intricacies of our da
 
 With these valuable insights in our arsenal, we find ourselves at the thrilling culmination of our EDA journey. 🌟🔍 For more exciting insights, I invite you to explore this section in detail.
 
-**Related Files:** `Exploratory_Data_Analysis.py`
+**Related Scripts:** `Exploratory_Data_Analysis.py`
 
 **Additional Plots:** More plots related to this section can be found in the `Exploratory_Data_Analysis_plots` folder in my repository.
 
 **Extended Details:** For detailed information about this section, please visit this page: [Exploratory Data Analysis (EDA)](https://tasteful-background-b30.notion.site/3-Exploratory-Data-Analysis-EDA-a802f6e292ad426e8a17a65fdd6e4bbb?pvs=4)
+
+Certainly, here's the revised section for your README:
+
+## 🧩 **4. Data Clustering**
+
+Visualizing Clustered Programs in 2021: t-SNE with HDBSCAN Clustering and Program Efficiency
+
+![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/e424c2ba-5dc6-4851-88e8-3b7972f768d5)
+
+In our pursuit of understanding what distinguishes regions with efficient material collection and household services from those that face challenges, we're making a critical pit stop: **Data Clustering**. Our aim is to group similar programs together, enhancing the precision of our feature analysis and unveiling hidden patterns.
+
+Buckle up as we explore Data Clustering with the power of HDBSCAN, a highly accurate clustering method, and visualize these clusters in two dimensions using t-SNE. This promises to be an electrifying session that will reveal insights like never before! 🚀📊
+
+**Related Files:** `Clustering(HDBSCAN)_Visualization(t_SNE).py`
+
+**For more information about this section, please visit this page: [Data Clustering](https://tasteful-background-b30.notion.site/4-Data-Clustering-1f3fc49ed986428c806098c6555dda78?pvs=4)**
