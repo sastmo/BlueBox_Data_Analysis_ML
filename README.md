@@ -137,6 +137,8 @@ Buckle up, as we prepare to venture into the next thrilling chapter—the captiv
 
 ### 📊 **6. Feature Analysis**
 
+Feature Selection Analysis: Prioritizing Important Features by Frequency
+
 ![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/8e568535-6297-4aa4-9c27-5a29b7334368)
 
 In the previous chapters, we've meticulously fine-tuned our machine-learning model, navigated the intricate landscape of hyperparameter tuning, and laid a solid foundation for our analysis. Now, it's time to turn our attention to **Feature Analysis**. 🧐 This is where we dive deep to comprehend the factors that truly matter, the features that can make or break a program's performance.
@@ -148,3 +150,27 @@ Our journey has been a thrilling rollercoaster, filled with discoveries and insi
 **Related Scripts:** `Feature_Selection_V1(Random Features).py`, `Feature_Selection_V2(Boruta).py`
 
 **For more in-depth information about this section, please visit this page:** [Feature Analysis](https://tasteful-background-b30.notion.site/6-Feature-Analysis-cb998fe7a17c4446b72d206fad7d03ec?pvs=4)
+
+
+### 💫 **7. Local Feature Selection**
+
+Local Feature Selection for Noise Cluster (-1)
+
+![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/36031e43-dc77-431c-a7da-ad3cba48e279)
+
+
+Welcome to Section 7 of our exhilarating journey! From the inception of this data analysis project to the in-depth exploration of various facets of the Blue Box Program, it's incredible to see how far we've come. As we delve into Section 7, we're entering a pivotal phase that promises to bring us even closer to unraveling the program's mysteries.
+
+In this section, we'll immerse ourselves in the captivating world of **Local Feature Selection** – a critical element in our quest for data-driven insights. Get ready to embark on a voyage filled with valuable revelations and discoveries that could shape the course of our analysis. 🌟📊
+
+1️⃣ **At the group level:** We'll kick off by employing a systematic binary classification approach to identify the features that play a significant role in distinguishing clusters within our dataset. This involves the creation of a unique 'Target' column, transforming our challenge into a classification task. By doing so, we'll pinpoint the features that set a specific cluster apart, assigning a target value of 1 to it and 0 to the others. This transformation opens up exciting possibilities for feature analysis within each category. 🧩
+
+2️⃣ **At the point (Observation) level:** But our journey doesn't stop there. We'll venture deeper into **point-level** feature selection, dissecting the importance of features in predicting the 'Target' value for each data point or observation. This meticulous analysis will provide profound insights into the significance of each feature in our predictive models and offer invaluable guidance for areas that can be improved. 📈🔍
+
+As we embark on this captivating expedition into local feature selection, we extend a warm invitation for you to join us in unveiling the intricate tapestry of data analysis. Together, we'll uncover the gems hidden within the Blue Box Program's dataset and gain a deeper understanding of its inner workings. 🌐🚀
+
+**Related Scripts for Group Level:** `Local_Feature_Selection_Group_Level.py`, `Exploratory_Data_Analysis_CLusters.py`
+
+**Related Scripts for Observation Level:** `Local_Feature_Selection_Observation_Level.py`
+
+**For more in-depth information about this section, please visit this page:** [Local Feature Selection](https://www.notion.so/7-Local-Feature-Selection-599e6ea05a9e43eab629f7e9192d003a)
