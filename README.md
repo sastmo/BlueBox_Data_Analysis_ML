@@ -5,7 +5,6 @@
 [![Machine Learning](https://img.shields.io/badge/Machine%20Learning-Enabled-blue.svg)](https://en.wikipedia.org/wiki/Machine_learning)
 [![Data Clustering](https://img.shields.io/badge/Data%20Clustering-Clustering-lightgrey)](https://en.wikipedia.org/wiki/Cluster_analysis)
 [![HDBSCAN](https://img.shields.io/badge/HDBSCAN-Clustering-blue)](https://hdbscan.readthedocs.io/en/latest/)
-[![t-SNE](https://img.shields.io/badge/t-SNE-Dimension%20Reduction-blue.svg)](https://scikit-learn.org/stable/modules/manifold.html#t-sne)
 [![Random Forest](https://img.shields.io/badge/Random%20Forest-Modeling-brightgreen)](https://en.wikipedia.org/wiki/Random_forest)
 [![Gradient Boost](https://img.shields.io/badge/Gradient%20Boost-Modeling-yellowgreen)](https://en.wikipedia.org/wiki/Gradient_boosting)
 [![Regression](https://img.shields.io/badge/Regression-Modeling-green)](https://en.wikipedia.org/wiki/Regression_analysis)
@@ -35,3 +34,5 @@ Together, let's dive in and unlock the potential of this data-driven exploration
 6. 📊 **Feature Analysis**
 7. 💫 **Local Feature Selection**
 8. 🌱🌱 **GradientBoostingRegressor**
+
+![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/01e91b5c-42e1-40b3-ade0-51b14437cc0f)
