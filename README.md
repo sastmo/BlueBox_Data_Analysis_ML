@@ -55,12 +55,12 @@ Our mission is clear: create a comprehensive data analysis framework from start 
 
 **Extended Details:** For more in-depth information about this section, please visit my portfolio pages: [Data Model and Data Manipulation](https://tasteful-background-b30.notion.site/1-Data-Model-ce06ad4af58346cb98e853fe997345cb?pvs=4)
 
+
 ## 📊 **2. Data Visualization with Power BI**
 
 Explore Material Collections: 2019 vs. 2021 - Changes by Category
 
 ![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/6f4d9cab-5b91-4927-a270-7334cb0331e8)
-
 
 Welcome to the captivating world of **Data Visualization with Power BI**!
 
@@ -74,14 +74,12 @@ In this section, we leverage the power of Power BI to transform our meticulously
 
 **Extended Details:** For more in-depth information about this section, please visit my portfolio pages: [Data Visualization using Power BI](https://tasteful-background-b30.notion.site/2-Data-Visualization-using-Power-BI-9c9c024c4ddc4fceb1f7ce2d1ababad5?pvs=4)
 
-Certainly, here's the revised section for your README:
 
 ## 🔍**3. Exploratory Data Analysis (EDA)**
 
 Analyzing Programs: Quadrant-Based Classification of Waste Material Change vs. Household Service Coverage Change (2020-2021)
 
 ![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/a323cabd-acae-4d5d-8be3-e2049560b020)
-
 
 In this captivating expedition, we've delved deep into the intricacies of our dataset, seeking to unearth the hidden gems of knowledge within. As we navigated through our data-driven adventure, we uncovered three pivotal insights:
 
@@ -91,11 +89,8 @@ In this captivating expedition, we've delved deep into the intricacies of our da
 
 With these valuable insights in our arsenal, we find ourselves at the thrilling culmination of our EDA journey. 🌟🔍 For more exciting insights, I invite you to explore this section in detail.
 
-**Related Files:** Exploratory_Data_Analysis.py
+**Related Files:** `Exploratory_Data_Analysis.py`
 
-**Additional Plots:** More plots related to this section can be found in the corresponding folder in my repository.
+**Additional Plots:** More plots related to this section can be found in the `Exploratory_Data_Analysis_plots` folder in my repository.
 
-For detailed information about this section, please visit this page: [Exploratory Data Analysis (EDA)](https://tasteful-background-b30.notion.site/3-Exploratory-Data-Analysis-EDA-a802f6e292ad426e8a17a65fdd6e4bbb?pvs=4)
-
-
-
+**Extended Details:** For detailed information about this section, please visit this page: [Exploratory Data Analysis (EDA)](https://tasteful-background-b30.notion.site/3-Exploratory-Data-Analysis-EDA-a802f6e292ad426e8a17a65fdd6e4bbb?pvs=4)
