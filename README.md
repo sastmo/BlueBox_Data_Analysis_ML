@@ -6,6 +6,7 @@
 [![Data Clustering](https://img.shields.io/badge/Data%20Clustering-Clustering-lightgrey)](https://en.wikipedia.org/wiki/Cluster_analysis)
 [![HDBSCAN](https://img.shields.io/badge/HDBSCAN-Clustering-blue)](https://hdbscan.readthedocs.io/en/latest/)
 [![Hyperparameter Tuning](https://img.shields.io/badge/Hyperparameter%20Tuning-Method-blue.svg)](https://en.wikipedia.org/wiki/Hyperparameter_tuning)
+[![Feature Analysis](https://img.shields.io/badge/Feature%20Analysis-Method-blue.svg)](https://en.wikipedia.org/wiki/Feature_analysis_in_machine_learning)
 [![Random Forest](https://img.shields.io/badge/Random%20Forest-Modeling-brightgreen)](https://en.wikipedia.org/wiki/Random_forest)
 [![Gradient Boost](https://img.shields.io/badge/Gradient%20Boost-Modeling-yellowgreen)](https://en.wikipedia.org/wiki/Gradient_boosting)
 [![Regression](https://img.shields.io/badge/Regression-Modeling-green)](https://en.wikipedia.org/wiki/Regression_analysis)
@@ -133,3 +134,17 @@ Buckle up, as we prepare to venture into the next thrilling chapter—the captiv
 
 **For more in-depth information about this section, please visit this page:** [Hyperparameter Tuning](https://tasteful-background-b30.notion.site/5-Hyperparameter-Tuning-89e48769a75d45f69d560d64a2787596?pvs=4)
 
+
+### 📊 **6. Feature Analysis**
+
+![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/8e568535-6297-4aa4-9c27-5a29b7334368)
+
+In the previous chapters, we've meticulously fine-tuned our machine-learning model, navigated the intricate landscape of hyperparameter tuning, and laid a solid foundation for our analysis. Now, it's time to turn our attention to **Feature Analysis**. 🧐 This is where we dive deep to comprehend the factors that truly matter, the features that can make or break a program's performance.
+
+But this isn't just any feature analysis; it's a journey that involves a **two-layer feature selection** process. First, we'll employ **Feature Importance + Random Features**, introducing random twins for each feature to evaluate their importance. Then, we'll raise the stakes with **Boruta Feature Importance**, using shuffling and shadow twins to unlock even more insights into feature selection. Get ready, because we're embarking on a data-driven expedition that will transform your understanding of the Blue Box Program. 💼🔍
+
+Our journey has been a thrilling rollercoaster, filled with discoveries and insights. From hyperparameter tuning to global feature analysis, we've built a robust framework to guide our data analysis journey. Now, the moment we've all been waiting for has arrived: Local Feature Analysis. 🌟🔎
+
+**Related Scripts:** `Feature_Selection_V1(Random Features).py`, `Feature_Selection_V2(Boruta).py`
+
+**For more in-depth information about this section, please visit this page:** [Feature Analysis](https://tasteful-background-b30.notion.site/6-Feature-Analysis-cb998fe7a17c4446b72d206fad7d03ec?pvs=4)
