@@ -71,3 +71,29 @@ In this section, we leverage the power of Power BI to transform our meticulously
 💼 As you reach this point, I'm thrilled to see you progressing on this enlightening journey. Together, we've gained a broader understanding of the program's reach and the materials it handles. Notably, we've identified policies that are making a positive impact, and we've unveiled strong relationships between key parameters. 📈🤝
 
 **Power BI Dashboard:** The data model is available as a Power BI (pbix) file in the `PowerBI_Visualization_Blue_Box` folder within this repository.
+
+**Extended Details:** For more in-depth information about this section, please visit my portfolio pages: [Data Visualization using Power BI](https://tasteful-background-b30.notion.site/2-Data-Visualization-using-Power-BI-9c9c024c4ddc4fceb1f7ce2d1ababad5?pvs=4)
+
+Certainly, here's the revised section for your README:
+
+## 🔍**3. Exploratory Data Analysis (EDA)**
+
+Analyzing Programs: Quadrant-Based Classification of Waste Material Change vs. Household Service Coverage Change (2020-2021)
+
+![image](https://github.com/sastmo/BlueBox_Data_Analysis_ML/assets/116411251/a323cabd-acae-4d5d-8be3-e2049560b020)
+
+
+In this captivating expedition, we've delved deep into the intricacies of our dataset, seeking to unearth the hidden gems of knowledge within. As we navigated through our data-driven adventure, we uncovered three pivotal insights:
+
+1. 🌎 **Uniform Distribution Across Regions:** Our data revealed a striking uniformity in resource allocation across regions, encompassing vibrant cities like Toronto, Ottawa, Vancouver, and Montreal. While this might seem equitable, it has inadvertently bred inefficiencies within these areas.
+2. 💰 **High Operations, Low Efficiency:** Curiously, these very regions boasting the highest program operations and waste collection rates demonstrated lower efficiency. This imbalance creates a significant financial burden that could potentially jeopardize the program's sustainability.
+3. 📈 **Cost vs. Volume Relationship:** Our exploration ventured into the intriguing relationship between program costs and collected materials. It exhibited a fascinating power function pattern, characterized by a power value between 0 and 1. This suggests a potential volume shrinkage phenomenon beyond a certain point. To ensure program success, we must pinpoint the optimal values for each region.
+
+With these valuable insights in our arsenal, we find ourselves at the thrilling culmination of our EDA journey. 🌟🔍 For more exciting insights, I invite you to explore this section in detail.
+
+**Related Files:** Exploratory_Data_Analysis.py
+
+**Additional Plots:** More plots related to this section can be found in the corresponding folder in my repository.
+
+For detailed information about this section, please visit this page: [Exploratory Data Analysis (EDA)](https://tasteful-background-b30.notion.site/3-Exploratory-Data-Analysis-EDA-a802f6e292ad426e8a17a65fdd6e4bbb?pvs=4)
+
