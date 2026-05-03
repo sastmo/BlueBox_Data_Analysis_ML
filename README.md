@@ -1,6 +1,7 @@
 # Diving into Canada's Blue Box Program with EDA and ML 👋
+[![CI](https://github.com/sastmo/BlueBox_Data_Analysis_ML/actions/workflows/ci.yml/badge.svg)](https://github.com/sastmo/BlueBox_Data_Analysis_ML/actions/workflows/ci.yml)
 [![EDA](https://img.shields.io/badge/EDA-Data%20Analysis-blue.svg)](https://en.wikipedia.org/wiki/Exploratory_data_analysis)
-[![Python](https://img.shields.io/badge/Python-3.7-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.9-blue.svg)](https://www.python.org/)
 [![Power BI](https://img.shields.io/badge/Power%20BI-Data%20Visualization-orange)](https://powerbi.microsoft.com/)
 [![Machine Learning](https://img.shields.io/badge/Machine%20Learning-Enabled-blue.svg)](https://en.wikipedia.org/wiki/Machine_learning)
 [![Data Clustering](https://img.shields.io/badge/Data%20Clustering-Clustering-lightgrey)](https://en.wikipedia.org/wiki/Cluster_analysis)
@@ -25,6 +26,23 @@ At the heart of this project, you'll find a deep-seated passion for the environm
 My mission? To craft an all-encompassing framework for data analysis, guiding us through data cleaning, preparation, feature analysis, and regression. It's a roadmap to unearth the hidden gems buried within the data, one step at a time.
 
 Together, let's dive in and unlock the potential of this data-driven exploration! 🚀📊
+
+## Getting Started
+
+```bash
+# Clone the repo
+git clone https://github.com/sastmo/BlueBox_Data_Analysis_ML.git
+cd BlueBox_Data_Analysis_ML
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run a script (from the src/ directory)
+cd src
+python exploratory_data_analysis.py
+```
+
+Data files are in `data/`, generated plots land in `outputs/`.
 
 ## Table of Contents
 
@@ -51,7 +69,7 @@ Our mission is clear: create a comprehensive data analysis framework from start 
 
 🚀 Join me as we move forward to uncover thrilling Power BI data visualizations and unveil the mesmerizing tapestry of data patterns. Your journey into the world of data-driven insights is about to get even more exciting!
 
-**Related Scripts:** The scripts used for this section can be found in the file `Data_Model.py` in this repository.
+**Related Scripts:** `src/data_model.py`
 
 **Data Model in Power BI:** The data model is available as a Power BI (pbix) file in the `PowerBI_Visualization_Blue_Box` folder within this repository.
 
@@ -91,13 +109,11 @@ In this captivating expedition, we've delved deep into the intricacies of our da
 
 With these valuable insights in our arsenal, we find ourselves at the thrilling culmination of our EDA journey. 🌟🔍 For more exciting insights, I invite you to explore this section in detail.
 
-**Related Scripts:** `Exploratory_Data_Analysis.py`
+**Related Scripts:** `src/exploratory_data_analysis.py`
 
-**Additional Plots:** More plots related to this section can be found in the `Exploratory_Data_Analysis_plots` folder in my repository.
+**Additional Plots:** `outputs/eda_plots/`
 
 **Extended Details:** For detailed information about this section, please visit this page: [Exploratory Data Analysis (EDA)](https://tasteful-background-b30.notion.site/3-Exploratory-Data-Analysis-EDA-a802f6e292ad426e8a17a65fdd6e4bbb?pvs=4)
-
-Certainly, here's the revised section for your README:
 
 ## 🧩 **4. Data Clustering**
 
@@ -109,7 +125,7 @@ In our pursuit of understanding what distinguishes regions with efficient materi
 
 Buckle up as we explore Data Clustering with the power of HDBSCAN, a highly accurate clustering method, and visualize these clusters in two dimensions using t-SNE. This promises to be an electrifying session that will reveal insights like never before! 🚀📊
 
-**Related Scripts:** `Clustering(HDBSCAN)_Visualization(t_SNE).py`
+**Related Scripts:** `src/clustering_hdbscan_tsne.py`
 
 **For more information about this section, please visit this page**: [Data Clustering](https://tasteful-background-b30.notion.site/4-Data-Clustering-1f3fc49ed986428c806098c6555dda78?pvs=4)
 
@@ -130,7 +146,7 @@ I warmly invite you to join me on this journey, whether you are already well-ver
 
 Buckle up, as we prepare to venture into the next thrilling chapter—the captivating world of data analysis! 🚀 In the upcoming leg of our expedition, we will delve deeply into feature analysis, both on a global scale and with a local focus. Our goal is to discern the differences between high-performing programs and those in need of improvement.
 
-**Related Scripts:** `Hyperparameter-tuning.py`
+**Related Scripts:** `src/hyperparameter_tuning.py`
 
 **For more in-depth information about this section, please visit this page:** [Hyperparameter Tuning](https://tasteful-background-b30.notion.site/5-Hyperparameter-Tuning-89e48769a75d45f69d560d64a2787596?pvs=4)
 
@@ -147,7 +163,7 @@ But this isn't just any feature analysis; it's a journey that involves a **two-l
 
 Our journey has been a thrilling rollercoaster, filled with discoveries and insights. From hyperparameter tuning to global feature analysis, we've built a robust framework to guide our data analysis journey. Now, the moment we've all been waiting for has arrived: Local Feature Analysis. 🌟🔎
 
-**Related Scripts:** `Feature_Selection_V1(Random Features).py`, `Feature_Selection_V2(Boruta).py`
+**Related Scripts:** `src/feature_selection_random.py`, `src/feature_selection_boruta.py`
 
 **For more in-depth information about this section, please visit this page:** [Feature Analysis](https://tasteful-background-b30.notion.site/6-Feature-Analysis-cb998fe7a17c4446b72d206fad7d03ec?pvs=4)
 
@@ -168,9 +184,9 @@ In this section, we'll immerse ourselves in the captivating world of **Local Fea
 
 As we embark on this captivating expedition into local feature selection, we extend a warm invitation for you to join us in unveiling the intricate tapestry of data analysis. Together, we'll uncover the gems hidden within the Blue Box Program's dataset and gain a deeper understanding of its inner workings. 🌐🚀
 
-**Related Scripts for Group Level:** `Local_Feature_Selection_Group_Level.py`, `Exploratory_Data_Analysis_CLusters.py`
+**Related Scripts for Group Level:** `src/local_feature_selection_group.py`, `src/exploratory_data_analysis_clusters_v1.py`
 
-**Related Scripts for Observation Level:** `Local_Feature_Selection_Observation_Level.py`
+**Related Scripts for Observation Level:** `src/local_feature_selection_observation.py`
 
 **For more in-depth information about this section, please visit this page:** [Local Feature Selection](https://www.notion.so/7-Local-Feature-Selection-599e6ea05a9e43eab629f7e9192d003a)
 
@@ -189,7 +205,7 @@ With our journey coming to an end, I want to express my gratitude for joining us
 
 Thank you for being part of this journey, and I invite you to dive deep into this section for a captivating finale. 🌟📊
 
-**Related Scripts:** `GradientBoostingClass.py` and `GradientBoostRegression.py`
+**Related Scripts:** `src/gradient_boosting_class.py`, `src/gradient_boost_regression.py`
 
 **For more in-depth information about this section, please visit this page:** [Gradient Boosting Regressor](https://www.notion.so/8-GradientBoostingRegressor-ca74e6e8c17d4ea3b2972d4c57649c84?pvs=4)
 
