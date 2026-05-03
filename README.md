@@ -1,4 +1,4 @@
-# Canada's Blue Box Program: Clustering, Feature Intelligence & Recycling Forecasting
+# Decoding Canada's Blue Box Program with Machine Learning
 
 [![CI](https://github.com/sastmo/BlueBox_Data_Analysis_ML/actions/workflows/ci.yml/badge.svg)](https://github.com/sastmo/BlueBox_Data_Analysis_ML/actions/workflows/ci.yml)
 [![HDBSCAN](https://img.shields.io/badge/HDBSCAN-Clustering-blue)](https://hdbscan.readthedocs.io/en/latest/)
