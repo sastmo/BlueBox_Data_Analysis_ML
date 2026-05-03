@@ -22,6 +22,8 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score, train_test_split, StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 
+from config import DATA_DIR
+
 
 # Load and data manipulate function
 def load_and_manipulate_data(file_path, selected_features_v1, threshold=0.00000, cluster_number=-1):
@@ -220,9 +222,6 @@ class FeatureImportanceAnalyzer:
         plt.show()
 
 
-# Define the file path
-file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\result_classification.csv"
-
 # Define the selected features list
 selected_features_v1 = [
     'Total Households Serviced', 'Single Family Dwellings', 'Full User Pay',
@@ -233,7 +232,7 @@ selected_features_v1 = [
 ]
 
 # Call the function to load and manipulate the data
-selected_features = load_and_manipulate_data(file_path, selected_features_v1)
+selected_features = load_and_manipulate_data(DATA_DIR / "result_classification.csv", selected_features_v1)
 
 # Get unique years from the data
 unique_years = selected_features['Year'].unique()

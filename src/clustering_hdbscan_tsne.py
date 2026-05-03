@@ -29,6 +29,8 @@ from sklearn.model_selection import KFold, GridSearchCV
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import plotly.express as px
 
+from config import DATA_DIR, CLUSTERING_DIR
+
 
 # Function to load data from CSV files and handle 'inf' values
 def load_and_clean_data(file_path_market_agg, file_path_quadrant_data):
@@ -345,11 +347,8 @@ def plot_tsne_with_hover_labels(X_tsne, dataset, coloring_variable, title, year_
     # Create a file name based on coloring_variable and year_
     file_name = f"{coloring_variable}_{year_}_averages.xlsx"
 
-    # Specify the file path where you want to save the Excel files
-    file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\Clustering\\" + file_name
-
-    # Save the data to an Excel file
-    variable_averages.to_excel(file_path)
+    CLUSTERING_DIR.mkdir(parents=True, exist_ok=True)
+    variable_averages.to_excel(CLUSTERING_DIR / file_name)
 
 
 def main_visualization(dataset, year_):
@@ -417,12 +416,10 @@ def main_visualization(dataset, year_):
                                 year_)
 
 
-# Define the file path for market_agg and quadrant_data CSV
-file_path_market_agg = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\market_agg.csv"
-file_path_quadrant_data = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\quadrant_data.csv"
-
-# Call the function to load and clean the data
-market_agg, quadrant_data = load_and_clean_data(file_path_market_agg, file_path_quadrant_data)
+market_agg, quadrant_data = load_and_clean_data(
+    DATA_DIR / "market_agg.csv",
+    DATA_DIR / "quadrant_data.csv",
+)
 
 # Now, 'market_agg_data' contains the cleaned 'market_agg' data
 # Get unique years from the data
@@ -470,9 +467,5 @@ result_classification_df = pd.concat(result_classification_list, ignore_index=Tr
 # Print the selected features DataFrame
 print(result_classification_df, result_classification_df.columns)
 
-# Define the file path
-file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\result_classification.csv"
-
-# Save the 'result_classification_df' DataFrame to the specified file path using "with" statement
-with open(file_path, 'w', newline='') as file:
+with open(DATA_DIR / "result_classification.csv", 'w', newline='') as file:
     result_classification_df.to_csv(file, index=False)

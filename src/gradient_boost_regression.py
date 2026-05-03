@@ -9,6 +9,8 @@ This script provides a holistic approach to understanding and predicting recycli
 import pandas as pd
 from gradient_boosting_class import GradientBoostingModel
 
+from config import DATA_DIR
+
 
 # Function to load and manipulate data
 def load_and_manipulate_data(file_path, selected_features_v2):
@@ -58,10 +60,6 @@ def feature_target_selection(data_set, year_):
     return X_feature_, y_target_
 
 
-# Load data :
-# Define the file path
-file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\result_classification.csv"
-
 # Define the selected features list
 selected_features_v2 = [
     'Total Households Serviced', 'Single Family Dwellings', 'Full User Pay', 'Municipal Group',
@@ -71,7 +69,7 @@ selected_features_v2 = [
 ]
 
 # Call the function to load and manipulate the data
-recycle_material = load_and_manipulate_data(file_path, selected_features_v2)
+recycle_material = load_and_manipulate_data(DATA_DIR / "result_classification.csv", selected_features_v2)
 
 # Get unique years from the data
 unique_years = recycle_material['Year'].unique()

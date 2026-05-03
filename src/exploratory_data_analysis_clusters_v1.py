@@ -6,13 +6,9 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
+from config import DATA_DIR
 
-# Load data:
-# Define the file path
-file_path_classification = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\result_classification.csv"
-
-# Read the CSV file into a DataFrame
-classified_data = pd.read_csv(file_path_classification)
+classified_data = pd.read_csv(DATA_DIR / "result_classification.csv")
 
 
 # Function to plot grouped bar charts for cluster analysis

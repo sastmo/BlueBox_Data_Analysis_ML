@@ -22,6 +22,8 @@ from sklearn.preprocessing import StandardScaler
 from treeinterpreter import treeinterpreter as ti, utils
 import lime.lime_tabular
 
+from config import DATA_DIR
+
 
 def load_and_manipulate_data(file_path, selected_features_v1):
     """
@@ -140,9 +142,6 @@ def analyze_feature_contributions_LIME(model, X_train_, X_feature, program_codes
         plt.show()
 
 
-# Define the file path
-file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\result_classification.csv"
-
 # Define the selected features list
 selected_features_v1 = [
     'Total Households Serviced', 'Single Family Dwellings', 'Full User Pay',
@@ -153,7 +152,7 @@ selected_features_v1 = [
 ]
 
 # Call the function to load and manipulate the data
-selected_features = load_and_manipulate_data(file_path, selected_features_v1)
+selected_features = load_and_manipulate_data(DATA_DIR / "result_classification.csv", selected_features_v1)
 
 # Best Hyperparameters resulted form Hyperparameter tuning
 best_params = {'bootstrap': True, 'max_depth': 90, 'min_samples_leaf': 1, 'min_samples_split': 4, 'n_estimators': 489}

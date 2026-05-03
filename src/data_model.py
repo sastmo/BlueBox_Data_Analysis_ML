@@ -4,6 +4,8 @@ from pmdarima.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
+from config import DATA_DIR
+
 
 def load_data():
     """
@@ -14,10 +16,9 @@ def load_data():
     - cost_revenue: DataFrame, cost and revenue data
     - payment_model: DataFrame, payment model data
     """
-    # Define file paths
-    csv_file_path_MT = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\Market_Tonnes.xlsx"
-    csv_file_path_CR = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\Cost_Revenue.xlsx"
-    csv_file_path_FP = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\FinanceProgram.xlsx"
+    csv_file_path_MT = DATA_DIR / "Market_Tonnes.xlsx"
+    csv_file_path_CR = DATA_DIR / "Cost_Revenue.xlsx"
+    csv_file_path_FP = DATA_DIR / "FinanceProgram.xlsx"
 
     # Load data into DataFrames
     market_volume = pd.read_excel(csv_file_path_MT)
@@ -149,9 +150,5 @@ print(market_agg.columns)
 print(vif_data_1)
 print(vif_data_2)
 
-# Define the file path
-file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\market_agg.csv"
-
-# Save the 'market_agg' DataFrame to the specified file path using "with" statement
-with open(file_path, 'w', newline='') as file:
+with open(DATA_DIR / "market_agg.csv", 'w', newline='') as file:
     market_agg.to_csv(file, index=False)

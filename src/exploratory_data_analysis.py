@@ -31,14 +31,9 @@ import seaborn as sns
 import plotly.express as px
 from scipy import stats
 from scipy.optimize import curve_fit
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from itertools import cycle
-from scipy.optimize import curve_fit
-from scipy import stats
 import mplcursors
+
+from config import DATA_DIR
 
 
 # Function to load and preprocess data from Excel files
@@ -50,10 +45,9 @@ def load_and_preprocess_data():
         market_agg (DataFrame): Preprocessed data.
         unique_years (list): List of unique years in the data.
     """
-    # Define file paths
-    csv_file_path_MT = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\Market_Tonnes.xlsx"
-    csv_file_path_CR = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\Cost_Revenue.xlsx"
-    csv_file_path_FP = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\FinanceProgram.xlsx"
+    csv_file_path_MT = DATA_DIR / "Market_Tonnes.xlsx"
+    csv_file_path_CR = DATA_DIR / "Cost_Revenue.xlsx"
+    csv_file_path_FP = DATA_DIR / "FinanceProgram.xlsx"
 
     # Load data into DataFrames
     market_volume = pd.read_excel(csv_file_path_MT)
@@ -607,9 +601,5 @@ def visualize_change_correlation(market_agg, unique_years, threshold=0.2):
 # Call the function to visualize the correlation
 quadrant_data = visualize_change_correlation(market_agg, unique_years, threshold=0.2)
 
-# Define the file path
-file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\quadrant_data.csv"
-
-# Save the 'market_agg' DataFrame to the specified file path using "with" statement
-with open(file_path, 'w', newline='') as file:
+with open(DATA_DIR / "quadrant_data.csv", 'w', newline='') as file:
     quadrant_data.to_csv(file, index=False)

@@ -21,12 +21,9 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 import seaborn as sns
 from matplotlib.lines import Line2D
 
-# Load data :
-# Define the file path
-file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\result_classification.csv"
+from config import DATA_DIR
 
-# Read the CSV file into a DataFrame
-recycle_material = pd.read_csv(file_path)
+recycle_material = pd.read_csv(DATA_DIR / "result_classification.csv")
 
 
 # Function to add the previous year's target as a feature

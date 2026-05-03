@@ -18,6 +18,8 @@ from sklearn.preprocessing import StandardScaler
 from collections import OrderedDict
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
+from config import DATA_DIR
+
 
 # Function to add the previous year's target as a feature
 def feature_target_selection(data_set, year_):
@@ -223,12 +225,7 @@ def plot_oob_error_vs_estimators(X_train, y_train, min_estimators, max_estimator
     plt.show()
 
 
-# Load data:
-# Define the file path
-file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\result_classification.csv"
-
-# Read the CSV file into a DataFrame
-recycle_material = pd.read_csv(file_path)
+recycle_material = pd.read_csv(DATA_DIR / "result_classification.csv")
 
 # Get unique years from the data
 unique_years = recycle_material['Year'].unique()

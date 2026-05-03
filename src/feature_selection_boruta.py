@@ -21,6 +21,8 @@ from matplotlib import pyplot, pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 
+from config import DATA_DIR
+
 
 # Function to load and manipulate data
 def load_and_manipulate_data(file_path, selected_features):
@@ -303,9 +305,7 @@ def boruta_feature_selection(X_feature, y_target, model, num_iterations=20):
     pyplot.show()
 
 
-# Load data :
-# Define the file path
-file_path_market_agg = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\market_agg.csv"
+file_path_market_agg = DATA_DIR / "market_agg.csv"
 
 # List of selected features from the first level of feature selection (Importance + Random Features)
 selected_features_v1 = np.array(['Total Households Serviced', 'Single Family Dwellings', 'Full User Pay',
