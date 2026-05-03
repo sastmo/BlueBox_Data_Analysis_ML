@@ -1,13 +1,12 @@
-# Canada's Blue Box Program: EDA and ML Pipeline
+# Canada's Blue Box Program: Clustering, Feature Intelligence & Recycling Forecasting
 
 [![CI](https://github.com/sastmo/BlueBox_Data_Analysis_ML/actions/workflows/ci.yml/badge.svg)](https://github.com/sastmo/BlueBox_Data_Analysis_ML/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/Python-3.9-blue.svg)](https://www.python.org/)
-[![EDA](https://img.shields.io/badge/EDA-Data%20Analysis-blue.svg)](https://en.wikipedia.org/wiki/Exploratory_data_analysis)
 [![HDBSCAN](https://img.shields.io/badge/HDBSCAN-Clustering-blue)](https://hdbscan.readthedocs.io/en/latest/)
 [![Feature Engineering](https://img.shields.io/badge/Feature-Engineering-blueviolet.svg)](https://en.wikipedia.org/wiki/Feature_engineering)
 [![Feature Selection](https://img.shields.io/badge/Feature%20Selection-Global%20%26%20Local-teal.svg)](https://en.wikipedia.org/wiki/Feature_selection)
 [![Hyperparameter Tuning](https://img.shields.io/badge/Hyperparameter-Tuning-orange.svg)](https://en.wikipedia.org/wiki/Hyperparameter_optimization)
 [![Gradient Boost](https://img.shields.io/badge/Gradient%20Boost-Regression-yellowgreen)](https://en.wikipedia.org/wiki/Gradient_boosting)
+[![Explainability](https://img.shields.io/badge/Explainability-LIME%20%26%20TreeInterpreter-red.svg)](https://en.wikipedia.org/wiki/Explainable_artificial_intelligence)
 [![Power BI](https://img.shields.io/badge/Power%20BI-Visualization-orange)](https://powerbi.microsoft.com/)
 
 Canada's Blue Box Program collects recyclable material from 5.4 million households across 70+ locations in 9 provinces -- roughly 740,000 tonnes per year. The raw numbers are well documented. What isn't is the question underneath them: why do some municipalities collect three times more material per household than others, using similar infrastructure and comparable budgets?
