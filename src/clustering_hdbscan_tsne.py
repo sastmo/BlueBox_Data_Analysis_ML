@@ -16,18 +16,19 @@ Visualize to Believe:
 Explore the enchanting world of t-SNE visualization, where data dimensions collapse into captivating visuals.
 """
 
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
 import hdbscan
-from matplotlib.lines import Line2D
-import plotly.graph_objs as go
-from sklearn.manifold import TSNE
-from sklearn.metrics import silhouette_score, make_scorer
-from sklearn.model_selection import KFold, GridSearchCV
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import plotly.express as px
+import plotly.graph_objs as go
+import seaborn as sns
+from sklearn.manifold import TSNE
+from sklearn.metrics import make_scorer, silhouette_score
+from sklearn.model_selection import GridSearchCV
+from sklearn.preprocessing import StandardScaler
+
+from config import CLUSTERING_DIR, DATA_DIR
 
 
 # Function to load data from CSV files and handle 'inf' values
@@ -47,7 +48,7 @@ def load_and_clean_data(file_path_market_agg, file_path_quadrant_data):
     quadrant_data = pd.read_csv(file_path_quadrant_data)
 
     # Create a Boolean mask to identify rows with 'inf' in 'Program efficiency' column
-    inf_mask = np.isinf(quadrant_data['Program efficiency'])
+    inf_mask = np.isinf(quadrant_data["Program efficiency"])
 
     # Use the mask to drop rows with 'inf' values
     quadrant_data = quadrant_data[~inf_mask]
@@ -69,26 +70,32 @@ def add_previous_year_target(data_set, year_):
     """
     if year_ == 2019:
         # For the initial year (2019), use the mean of the target from the same Program Code
-        year_data = data_set[data_set['Year'] == year_]
+        year_data = data_set[data_set["Year"] == year_]
 
         # Calculate and add the previous year's target as a feature
-        previous_year_avg = data_set.groupby('Program Code')['TOTAL Reported and/or Calculated Marketed Tonnes'].mean()
-        year_data['Previous_Target'] = year_data['Program Code'].map(previous_year_avg)
+        previous_year_avg = data_set.groupby("Program Code")[
+            "TOTAL Reported and/or Calculated Marketed Tonnes"
+        ].mean()
+        year_data["Previous_Target"] = year_data["Program Code"].map(previous_year_avg)
 
         return year_data
     else:
         # For subsequent years, use the previous year's target
-        year_data = data_set[data_set['Year'] == year_]
+        year_data = data_set[data_set["Year"] == year_]
 
         # Calculate and add the previous year's target as a feature
         previous_year = year_ - 1
-        previous_feature = data_set[data_set['Year'] == previous_year][['Program Code', 'TOTAL Reported and/or Calculated Marketed Tonnes']]
+        previous_feature = data_set[data_set["Year"] == previous_year][
+            ["Program Code", "TOTAL Reported and/or Calculated Marketed Tonnes"]
+        ]
 
         # Create a mapping of 'Program Code' to target for the previous year
-        previous_mapping = previous_feature.set_index('Program Code')['TOTAL Reported and/or Calculated Marketed Tonnes'].to_dict()
+        previous_mapping = previous_feature.set_index("Program Code")[
+            "TOTAL Reported and/or Calculated Marketed Tonnes"
+        ].to_dict()
 
         # Use the mapping to create the 'Previous_Target' column in the data set
-        year_data['Previous_Target'] = year_data['Program Code'].map(previous_mapping)
+        year_data["Previous_Target"] = year_data["Program Code"].map(previous_mapping)
 
         return year_data
 
@@ -106,9 +113,13 @@ def impute_previous_target(data_set):
     """
     for index_, row_ in data_set.iterrows():
         if row_.isnull().any():
-            program_code = row_['Program Code']
-            previous_target = data_set[data_set['Program Code'] == program_code]['TOTAL Reported and/or Calculated Marketed Tonnes'].mean()
-            data_set.loc[data_set['Program Code'] == program_code, 'Previous_Target'] = previous_target
+            program_code = row_["Program Code"]
+            previous_target = data_set[data_set["Program Code"] == program_code][
+                "TOTAL Reported and/or Calculated Marketed Tonnes"
+            ].mean()
+            data_set.loc[data_set["Program Code"] == program_code, "Previous_Target"] = (
+                previous_target
+            )
 
 
 # This function performs data preprocessing, hyperparameter tuning, and clustering using HDBSCAN.
@@ -125,16 +136,25 @@ def classification(dataset, year_):
     - cluster_mapping: DataFrame associating 'Program Code' with cluster labels and probabilities.
     """
     # Create a DataFrame to associate 'Program Code' with cluster labels
-    program_code_mapping = dataset['Program Code'].reset_index()
+    program_code_mapping = dataset["Program Code"].reset_index()
 
     # Data preprocessing (handle missing values, scaling, etc. if needed)
 
     # Prepare the dataset for clustering by removing irrelevant columns and addressing multicollinearity.
     # We drop columns that are not needed for clustering and handle multicollinearity by retaining only one feature
     # from a set of highly correlated columns to avoid redundancy in our data.
-    revised_dataset = dataset.drop(['Year', 'Program Code', 'Municipal Group', 'Quadrant',
-                                    'Program efficiency', 'Single Family Dwellings',
-                                    'User Pay Waste Collection (Pay-As-You-Throw)'], axis=1)
+    revised_dataset = dataset.drop(
+        [
+            "Year",
+            "Program Code",
+            "Municipal Group",
+            "Quadrant",
+            "Program efficiency",
+            "Single Family Dwellings",
+            "User Pay Waste Collection (Pay-As-You-Throw)",
+        ],
+        axis=1,
+    )
 
     # Create an instance of StandardScaler
     scaler = StandardScaler()
@@ -151,10 +171,10 @@ def classification(dataset, year_):
     # Perform hyperparameter tuning for the model using cross-validation search (CV Search).
     # Define a parameter grid to search
     param_grid = {
-        'alpha': [0.1, 0.5, 1.0, 1.5],
-        'min_cluster_size': [5, 10],
-        'min_samples': [None, 1, 2],
-        'p': [None, 1, 2]
+        "alpha": [0.1, 0.5, 1.0, 1.5],
+        "min_cluster_size": [5, 10],
+        "min_samples": [None, 1, 2],
+        "p": [None, 1, 2],
     }
 
     # Define a custom scoring function using silhouette_score
@@ -163,18 +183,20 @@ def classification(dataset, year_):
         try:
             # Silhouette Score is only valid when there are at least 2 clusters
             return silhouette_score(X, cluster_labels)
-        except:
+        except Exception:
             return 0  # Return 0 for single-cluster cases
 
     # Perform grid search with cross-validation
-    grid_search = GridSearchCV(model, param_grid, cv=5, scoring=make_scorer(custom_silhouette_score))
+    grid_search = GridSearchCV(
+        model, param_grid, cv=5, scoring=make_scorer(custom_silhouette_score)
+    )
     grid_search.fit(test_data)
 
     # Get the best parameters
     best_params = grid_search.best_params_
 
     # Create an HDBSCAN clusterer with the best parameters
-    clusterer = hdbscan.HDBSCAN(algorithm='best', gen_min_span_tree=True, **best_params)
+    clusterer = hdbscan.HDBSCAN(algorithm="best", gen_min_span_tree=True, **best_params)
 
     # Fit the clusterer to the test data
     cluster_labels = clusterer.fit_predict(test_data)
@@ -182,11 +204,15 @@ def classification(dataset, year_):
 
     # Create a DataFrame to associate 'Program Code' with cluster labels and cluster probabilities
     cluster_mapping = pd.DataFrame(
-        {'Program Code': program_code_mapping['Program Code'], 'Cluster_Labels': cluster_labels,
-         'Cluster_Probabilities': cluster_probs})
+        {
+            "Program Code": program_code_mapping["Program Code"],
+            "Cluster_Labels": cluster_labels,
+            "Cluster_Probabilities": cluster_probs,
+        }
+    )
 
     # Set the index of cluster_mapping to match program_code_mapping
-    cluster_mapping.set_index(program_code_mapping['index'], inplace=True)
+    cluster_mapping.set_index(program_code_mapping["index"], inplace=True)
 
     # Print cluster labels including noise
     print(f"The detail of clustering for year {year_} is:")
@@ -201,21 +227,19 @@ def classification(dataset, year_):
     print("Silhouette Score:", silhouette_avg)
 
     # Set up plotting parameters
-    sns.set_context('poster')
-    sns.set_style('white')
+    sns.set_context("poster")
+    sns.set_style("white")
     sns.set_color_codes()
-    plot_kwds = {'alpha': 0.5, 's': 80, 'linewidths': 0}
 
     # Plot the minimum spanning tree of the clusterer
-    clusterer.minimum_spanning_tree_.plot(edge_cmap='viridis',
-                                          edge_alpha=0.6,
-                                          node_size=80,
-                                          edge_linewidth=2)
+    clusterer.minimum_spanning_tree_.plot(
+        edge_cmap="viridis", edge_alpha=0.6, node_size=80, edge_linewidth=2
+    )
     plt.title("Minimum Spanning Tree")
     plt.show()
 
     # Plot the cluster hierarchy
-    clusterer.single_linkage_tree_.plot(cmap='viridis', colorbar=True)
+    clusterer.single_linkage_tree_.plot(cmap="viridis", colorbar=True)
     plt.title("Cluster Hierarchy")
     plt.show()
 
@@ -250,12 +274,12 @@ def visualize_tsne_divergence(revised_dataset_standard, year_):
 
     for perplexity in perplexity_values:
         model = TSNE(n_components=2, init="pca", perplexity=perplexity)
-        reduced = model.fit_transform(revised_dataset_standard)
+        model.fit_transform(revised_dataset_standard)
         divergence.append(model.kl_divergence_)
 
     # Plot t-SNE divergence vs perplexity
     plt.figure()
-    plt.plot(perplexity_values, divergence, marker='o', color='red')
+    plt.plot(perplexity_values, divergence, marker="o", color="red")
     plt.title(f"t-SNE Divergence vs Perplexity for year {year_}")
     plt.xlabel("Perplexity Values")
     plt.ylabel("Divergence")
@@ -267,6 +291,7 @@ def visualize_tsne_divergence(revised_dataset_standard, year_):
 #     This function generates a scatter plot of data points in two-dimensional t-SNE space. Each data point is
 #     color-coded based on a categorical variable, and hovering over a point reveals additional information. The
 #     average values of numerical features for each category are calculated and saved to an Excel file.
+
 
 def plot_tsne_with_hover_labels(X_tsne, dataset, coloring_variable, title, year_):
     """
@@ -297,27 +322,31 @@ def plot_tsne_with_hover_labels(X_tsne, dataset, coloring_variable, title, year_
     # Loop through unique values and create scatter plots
     for i, value in enumerate(unique_values):
         value_data = X_tsne[dataset[coloring_variable] == value]
-        program_efficiency = dataset[dataset[coloring_variable] == value]['Program efficiency']
-        program_code = dataset[dataset[coloring_variable] == value]['Program Code']
+        program_efficiency = dataset[dataset[coloring_variable] == value]["Program efficiency"]
+        program_code = dataset[dataset[coloring_variable] == value]["Program Code"]
 
         # Define hover text for this category
-        hover_text.extend([f"Program Code: {code}<br>Efficiency: {efficiency}" for code, efficiency in
-                           zip(program_code, program_efficiency)])
+        hover_text.extend(
+            [
+                f"Program Code: {code}<br>Efficiency: {efficiency}"
+                for code, efficiency in zip(program_code, program_efficiency)
+            ]
+        )
 
         # Create a scatter plot trace
         scatter = go.Scatter(
             x=value_data[:, 0],
             y=value_data[:, 1],
-            mode='markers',
+            mode="markers",
             marker=dict(
                 size=program_efficiency * 2500,
                 color=custom_colors[i % len(custom_colors)],
                 opacity=0.8,
-                line=dict(width=0.2, color='black')
+                line=dict(width=0.2, color="black"),
             ),
             name=str(value),  # Convert 'value' to a string
             text=hover_text,  # Assign hover text
-            hoverinfo='text+x+y'
+            hoverinfo="text+x+y",
         )
         scatter_list.append(scatter)
 
@@ -345,11 +374,8 @@ def plot_tsne_with_hover_labels(X_tsne, dataset, coloring_variable, title, year_
     # Create a file name based on coloring_variable and year_
     file_name = f"{coloring_variable}_{year_}_averages.xlsx"
 
-    # Specify the file path where you want to save the Excel files
-    file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\Clustering\\" + file_name
-
-    # Save the data to an Excel file
-    variable_averages.to_excel(file_path)
+    CLUSTERING_DIR.mkdir(parents=True, exist_ok=True)
+    variable_averages.to_excel(CLUSTERING_DIR / file_name)
 
 
 def main_visualization(dataset, year_):
@@ -375,9 +401,17 @@ def main_visualization(dataset, year_):
     dataset_vis = dataset
 
     # Drop irrelevant columns from the DataFrame
-    revised_dataset = dataset.drop(['Year', 'Program Code', 'Cluster_Probabilities',
-                                    'Program efficiency', 'Single Family Dwellings',
-                                    'User Pay Waste Collection (Pay-As-You-Throw)'], axis=1)
+    revised_dataset = dataset.drop(
+        [
+            "Year",
+            "Program Code",
+            "Cluster_Probabilities",
+            "Program efficiency",
+            "Single Family Dwellings",
+            "User Pay Waste Collection (Pay-As-You-Throw)",
+        ],
+        axis=1,
+    )
 
     # Call the function to visualize t-SNE divergence vs perplexity
     visualize_tsne_divergence(revised_dataset, year_)
@@ -398,35 +432,46 @@ def main_visualization(dataset, year_):
     # Visualize the data based on different attributes:
 
     # 1. Visualization based on clusters
-    plot_tsne_with_hover_labels(X_tsne, dataset_vis, 'Cluster_Labels',
-                                't-SNE visualization of waste materials collection',
-                                year_)
+    plot_tsne_with_hover_labels(
+        X_tsne,
+        dataset_vis,
+        "Cluster_Labels",
+        "t-SNE visualization of waste materials collection",
+        year_,
+    )
 
     # 2. Visualization based on Municipal Group
-    plot_tsne_with_hover_labels(X_tsne, dataset_vis, 'Municipal Group',
-                                't-SNE visualization of waste materials collection',
-                                year_)
+    plot_tsne_with_hover_labels(
+        X_tsne,
+        dataset_vis,
+        "Municipal Group",
+        "t-SNE visualization of waste materials collection",
+        year_,
+    )
 
     # 3. Visualization based on Quadrant
-    plot_tsne_with_hover_labels(X_tsne, dataset_vis, 'Quadrant', 't-SNE visualization of waste materials collection',
-                                year_)
+    plot_tsne_with_hover_labels(
+        X_tsne, dataset_vis, "Quadrant", "t-SNE visualization of waste materials collection", year_
+    )
 
     # 4. Visualization based on Bag Limit Program for Garbage Collection
-    plot_tsne_with_hover_labels(X_tsne, dataset_vis, 'Bag Limit Program for Garbage Collection',
-                                't-SNE visualization of waste materials collection',
-                                year_)
+    plot_tsne_with_hover_labels(
+        X_tsne,
+        dataset_vis,
+        "Bag Limit Program for Garbage Collection",
+        "t-SNE visualization of waste materials collection",
+        year_,
+    )
 
 
-# Define the file path for market_agg and quadrant_data CSV
-file_path_market_agg = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\market_agg.csv"
-file_path_quadrant_data = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\quadrant_data.csv"
-
-# Call the function to load and clean the data
-market_agg, quadrant_data = load_and_clean_data(file_path_market_agg, file_path_quadrant_data)
+market_agg, quadrant_data = load_and_clean_data(
+    DATA_DIR / "market_agg.csv",
+    DATA_DIR / "quadrant_data.csv",
+)
 
 # Now, 'market_agg_data' contains the cleaned 'market_agg' data
 # Get unique years from the data
-unique_years = market_agg['Year'].unique()
+unique_years = market_agg["Year"].unique()
 
 # Define a list to store the results for each year
 result_classification_list = []
@@ -437,8 +482,9 @@ for year in unique_years:
 
         # **** Data Processing and Integration:
         # Add the 'Quadrant' values from 'quadrant_data' to the 'market_agg' DataFrame
-        market_agg['Quadrant'] = quadrant_data.loc[
-            quadrant_data['Program Code'].isin(market_agg['Program Code']), 'Quadrant']
+        market_agg["Quadrant"] = quadrant_data.loc[
+            quadrant_data["Program Code"].isin(market_agg["Program Code"]), "Quadrant"
+        ]
 
         # Add previous year's target and operation cost as additional features
         extended_dataset = add_previous_year_target(market_agg, year)
@@ -450,9 +496,12 @@ for year in unique_years:
         clustered = classification(extended_dataset, year)
 
         # Merge the cluster_mapping DataFrame with the extended_dataset based on 'Program Code'
-        extended_dataset = pd.merge(extended_dataset,
-                                    clustered[['Program Code', 'Cluster_Labels', 'Cluster_Probabilities']],
-                                    on='Program Code', how='left')
+        extended_dataset = pd.merge(
+            extended_dataset,
+            clustered[["Program Code", "Cluster_Labels", "Cluster_Probabilities"]],
+            on="Program Code",
+            how="left",
+        )
 
         # *** Visualization using t_SNE
         main_visualization(extended_dataset, year)
@@ -461,7 +510,9 @@ for year in unique_years:
         result_classification_list.append(extended_dataset)
 
     else:
-        print("Year", year, "data processing is skipped because the new version is under construction")
+        print(
+            "Year", year, "data processing is skipped because the new version is under construction"
+        )
 
 
 # Combine the results from all years
@@ -470,9 +521,5 @@ result_classification_df = pd.concat(result_classification_list, ignore_index=Tr
 # Print the selected features DataFrame
 print(result_classification_df, result_classification_df.columns)
 
-# Define the file path
-file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\result_classification.csv"
-
-# Save the 'result_classification_df' DataFrame to the specified file path using "with" statement
-with open(file_path, 'w', newline='') as file:
+with open(DATA_DIR / "result_classification.csv", "w", newline="") as file:
     result_classification_df.to_csv(file, index=False)

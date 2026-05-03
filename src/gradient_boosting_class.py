@@ -9,12 +9,12 @@ plot_partial_dependence: Generate partial dependence plots to understand feature
 The script simplifies the process of building and fine-tuning Gradient Boosting models for various regression tasks.
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.model_selection import validation_curve, RandomizedSearchCV
-from sklearn.preprocessing import StandardScaler
 from sklearn.inspection import PartialDependenceDisplay
+from sklearn.model_selection import RandomizedSearchCV, validation_curve
+from sklearn.preprocessing import StandardScaler
 
 
 class GradientBoostingModel:
@@ -44,11 +44,14 @@ class GradientBoostingModel:
             X_test (array-like): Testing features.
             y_test (array-like): Testing target.
         """
+
         # Custom loss function (Huber loss)
         def custom_huber_loss(y_true, y_pred, alpha):
             # Huber loss calculation
             error = y_true - y_pred
-            huber_loss = np.where(np.abs(error) < alpha, 0.5 * error ** 2, alpha * (np.abs(error) - 0.5 * alpha))
+            huber_loss = np.where(
+                np.abs(error) < alpha, 0.5 * error**2, alpha * (np.abs(error) - 0.5 * alpha)
+            )
             return np.mean(huber_loss)
 
         # Create and fit the GradientBoostingRegressor model with the best parameters
@@ -70,23 +73,28 @@ class GradientBoostingModel:
         test_score = best_reg.score(X_test, y_test)
 
         # Print the mean values of the losses and scores
-        print(f'Huber Loss (train): {np.mean(train_loss):.4f}')
-        print(f'Huber Loss (test): {np.mean(test_loss):.4f}')
-        print(f'R^2 Score (train): {np.mean(train_score):.4f}')
-        print(f'R^2 Score (test): {np.mean(test_score):.4f}')
+        print(f"Huber Loss (train): {np.mean(train_loss):.4f}")
+        print(f"Huber Loss (test): {np.mean(test_loss):.4f}")
+        print(f"R^2 Score (train): {np.mean(train_score):.4f}")
+        print(f"R^2 Score (test): {np.mean(test_score):.4f}")
 
         # Create a range of values for the n_estimators parameter
         param_range = np.arange(1, 1001, 10)
 
         # Plot the validation curve for the model using different values of n_estimators
-        train_scores, test_scores = validation_curve(GradientBoostingRegressor(**self.best_params_),
-                                                     X_train, y_train, param_name='n_estimators',
-                                                     param_range=param_range, scoring='r2')
+        train_scores, test_scores = validation_curve(
+            GradientBoostingRegressor(**self.best_params_),
+            X_train,
+            y_train,
+            param_name="n_estimators",
+            param_range=param_range,
+            scoring="r2",
+        )
         plt.figure(figsize=(10, 6))
-        plt.plot(param_range, 1 - np.mean(train_scores, axis=1), label='Training score')
-        plt.plot(param_range, 1 - np.mean(test_scores, axis=1), label='Test score')
-        plt.xlabel('Number of trees')
-        plt.ylabel('Error')
+        plt.plot(param_range, 1 - np.mean(train_scores, axis=1), label="Training score")
+        plt.plot(param_range, 1 - np.mean(test_scores, axis=1), label="Test score")
+        plt.xlabel("Number of trees")
+        plt.ylabel("Error")
         plt.legend()
         plt.show()
 
@@ -115,32 +123,37 @@ class GradientBoostingModel:
         train_score = reg.score(X_train_scaled, y_train)
         test_score = reg.score(X_test_scaled, y_test)
 
-        print(f'R2 score (train): {train_score:.4f}')
-        print(f'R2 score (test): {test_score:.4f}')
+        print(f"R2 score (train): {train_score:.4f}")
+        print(f"R2 score (test): {test_score:.4f}")
 
         # Define hyperparameters for randomized search
         params = {
-            'learning_rate': [0.1, 0.05, 0.02, 0.01],
-            'n_estimators': [10, 50, 100, 500, 1000],
-            'max_depth': [3, 6],
-            'min_samples_leaf': [3, 5, 7],
-            'subsample': [0.5, 1.0, 0.1],
-            'max_features': [1.0, 0.3, 0.1],
-            'loss': ['ls', 'huber'],  # Include Huber loss
-            'alpha': [0.1, 0.3, 0.5, 0.7, 0.9]  # Tuning alpha for Huber loss
+            "learning_rate": [0.1, 0.05, 0.02, 0.01],
+            "n_estimators": [10, 50, 100, 500, 1000],
+            "max_depth": [3, 6],
+            "min_samples_leaf": [3, 5, 7],
+            "subsample": [0.5, 1.0, 0.1],
+            "max_features": [1.0, 0.3, 0.1],
+            "loss": ["ls", "huber"],  # Include Huber loss
+            "alpha": [0.1, 0.3, 0.5, 0.7, 0.9],  # Tuning alpha for Huber loss
         }
 
         # Perform randomized search for hyperparameter tuning
-        search = RandomizedSearchCV(GradientBoostingRegressor(random_state=self.random_seed),
-                                    params, n_iter=50, cv=3, n_jobs=-1)
+        search = RandomizedSearchCV(
+            GradientBoostingRegressor(random_state=self.random_seed),
+            params,
+            n_iter=50,
+            cv=3,
+            n_jobs=-1,
+        )
         search.fit(X_train_scaled, y_train)
         self.best_params_ = search.best_params_
 
         # Print the best hyperparameters
-        print(f"The best hyperparameter using Random Search:", self.best_params_)
+        print("The best hyperparameter using Random Search:", self.best_params_)
 
         # Extract the best alpha value from best_params_
-        self.best_alpha = self.best_params_['alpha']
+        self.best_alpha = self.best_params_["alpha"]
 
         # Get the best model from the search
         self.best_reg = GradientBoostingRegressor(**self.best_params_)
@@ -169,28 +182,33 @@ class GradientBoostingModel:
 
         # Perform a second randomized search with a fixed number of estimators using Early Stopping
         params = {
-            'learning_rate': [0.1, 0.05, 0.02, 0.01],
-            'max_depth': [3, 6],
-            'min_samples_leaf': [3, 5, 9],
-            'subsample': [0.5, 1.0, 0.1],
-            'max_features': [1.0, 0.3, 0.1],
-            'loss': ['ls', 'huber'],  # Include Huber loss
-            'alpha': [0.1, 0.3, 0.5, 0.7, 0.9]  # Tuning alpha for Huber loss
+            "learning_rate": [0.1, 0.05, 0.02, 0.01],
+            "max_depth": [3, 6],
+            "min_samples_leaf": [3, 5, 9],
+            "subsample": [0.5, 1.0, 0.1],
+            "max_features": [1.0, 0.3, 0.1],
+            "loss": ["ls", "huber"],  # Include Huber loss
+            "alpha": [0.1, 0.3, 0.5, 0.7, 0.9],  # Tuning alpha for Huber loss
         }
 
         search = RandomizedSearchCV(
-            GradientBoostingRegressor(random_state=self.random_seed, n_estimators=1000, n_iter_no_change=10),
-            params, n_iter=50, cv=3, n_jobs=-1
+            GradientBoostingRegressor(
+                random_state=self.random_seed, n_estimators=1000, n_iter_no_change=10
+            ),
+            params,
+            n_iter=50,
+            cv=3,
+            n_jobs=-1,
         )
         search.fit(X_train_scaled, y_train)
 
         self.best_params_ = search.best_params_
 
         # Print the best hyperparameters
-        print(f"The best hyperparameter using Random Search:", self.best_params_)
+        print("The best hyperparameter using Random Search:", self.best_params_)
 
         # Extract the best alpha value from best_params_
-        self.best_alpha = self.best_params_['alpha']
+        self.best_alpha = self.best_params_["alpha"]
 
         # Get the best model from the search
         self.best_reg = GradientBoostingRegressor(**self.best_params_)
@@ -211,7 +229,7 @@ class GradientBoostingModel:
         pos = np.arange(len(feature_importance))
         plt.barh(pos, feature_importance[sorted_idx])
         plt.yticks(pos, np.array(names)[sorted_idx])
-        plt.xlabel('Feature importance')
+        plt.xlabel("Feature importance")
         plt.show()
 
     def plot_partial_dependence(self, X_train, initial_features):
@@ -243,7 +261,9 @@ class GradientBoostingModel:
                 features.append(index)
 
         # Generate the partial dependence plot
-        pdp_display = PartialDependenceDisplay.from_estimator(self.best_reg, X_train_scaled, features, target=0)
+        pdp_display = PartialDependenceDisplay.from_estimator(
+            self.best_reg, X_train_scaled, features, target=0
+        )
 
         # Set the feature names for display
         pdp_display.feature_names = X_train.columns  # Use X.columns to set feature names

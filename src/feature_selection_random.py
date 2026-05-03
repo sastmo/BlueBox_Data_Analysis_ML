@@ -9,24 +9,19 @@ It calculates the number of times each feature passes the importance threshold a
 important features, enhancing the robustness of feature selection.
 """
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import scipy as sp
-from matplotlib import pyplot
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from sklearn.preprocessing import StandardScaler
-from statsmodels.stats.outliers_influence import variance_inflation_factor
 import seaborn as sns
+from matplotlib import pyplot
 from matplotlib.lines import Line2D
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
 
-# Load data :
-# Define the file path
-file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\result_classification.csv"
+from config import DATA_DIR
 
-# Read the CSV file into a DataFrame
-recycle_material = pd.read_csv(file_path)
+recycle_material = pd.read_csv(DATA_DIR / "result_classification.csv")
 
 
 # Function to add the previous year's target as a feature
@@ -42,11 +37,11 @@ def feature_target_selection(data_set, year_):
     - X_feature_ (DataFrame): Features for the specified year.
     - y_target_ (Series): Target variable for the specified year.
     """
-    year_data = data_set[data_set['Year'] == year_]
+    year_data = data_set[data_set["Year"] == year_]
 
     # Select columns before the target column
-    y_target_ = year_data['TOTAL Reported and/or Calculated Marketed Tonnes']
-    X_feature_ = year_data.drop(columns=['TOTAL Reported and/or Calculated Marketed Tonnes'])
+    y_target_ = year_data["TOTAL Reported and/or Calculated Marketed Tonnes"]
+    X_feature_ = year_data.drop(columns=["TOTAL Reported and/or Calculated Marketed Tonnes"])
 
     return X_feature_, y_target_
 
@@ -65,28 +60,32 @@ def add_previous_year_target(data_set, year_):
     """
     if year_ == 2019:
         # For the initial year (2019), use the mean of the target from the same Program Code
-        year_data = data_set[data_set['Year'] == year_]
+        year_data = data_set[data_set["Year"] == year_]
 
         # Calculate and add the previous year's target as a feature
-        previous_year_avg = data_set.groupby('Program Code')['TOTAL Reported and/or Calculated Marketed Tonnes'].mean()
-        year_data['Previous_Target'] = year_data['Program Code'].map(previous_year_avg)
+        previous_year_avg = data_set.groupby("Program Code")[
+            "TOTAL Reported and/or Calculated Marketed Tonnes"
+        ].mean()
+        year_data["Previous_Target"] = year_data["Program Code"].map(previous_year_avg)
 
         return year_data
     else:
         # For subsequent years, use the previous year's target
-        year_data = data_set[data_set['Year'] == year_]
+        year_data = data_set[data_set["Year"] == year_]
 
         # Calculate and add the previous year's target as a feature
         previous_year = year_ - 1
-        previous_feature = data_set[data_set['Year'] == previous_year][
-            ['Program Code', 'TOTAL Reported and/or Calculated Marketed Tonnes']]
+        previous_feature = data_set[data_set["Year"] == previous_year][
+            ["Program Code", "TOTAL Reported and/or Calculated Marketed Tonnes"]
+        ]
 
         # Create a mapping of 'Program Code' to target for the previous year
-        previous_mapping = previous_feature.set_index('Program Code')[
-            'TOTAL Reported and/or Calculated Marketed Tonnes'].to_dict()
+        previous_mapping = previous_feature.set_index("Program Code")[
+            "TOTAL Reported and/or Calculated Marketed Tonnes"
+        ].to_dict()
 
         # Use the mapping to create the 'Previous_Target' column in the data set
-        year_data['Previous_Target'] = year_data['Program Code'].map(previous_mapping)
+        year_data["Previous_Target"] = year_data["Program Code"].map(previous_mapping)
 
         return year_data
 
@@ -107,9 +106,11 @@ def impute_previous_target(X_feature_, data_set):
 
     for index_, row_ in X_feature_.iterrows():
         if row_.isnull().any():
-            pc_ = row_['Program Code']
-            pre_ = data_set[data_set['Program Code'] == pc_]['TOTAL Reported and/or Calculated Marketed Tonnes'].mean()
-            X_feature_.loc[X_feature_['Program Code'] == pc_, 'Previous_Target'] = pre_
+            pc_ = row_["Program Code"]
+            pre_ = data_set[data_set["Program Code"] == pc_][
+                "TOTAL Reported and/or Calculated Marketed Tonnes"
+            ].mean()
+            X_feature_.loc[X_feature_["Program Code"] == pc_, "Previous_Target"] = pre_
 
     return X_feature_
 
@@ -137,8 +138,6 @@ def generate_random_features(X):
             random_feature = np.random.randint(0, 100, size=len(X))
         random_features[column + "_random"] = random_feature
 
-    combine = pd.concat([X, random_features], axis=1)
-
     return pd.concat([X, random_features], axis=1)
 
 
@@ -161,7 +160,7 @@ def evaluate_feature_importance_addRandomColumn(X_feature, y_target, model):
     X_feature = X_feature.copy()
 
     # Drop the 'Year' column from X_feature
-    X_feature = X_feature.drop(columns=['Year'])
+    X_feature = X_feature.drop(columns=["Year"])
 
     # Impute NaN values based on the average of previous targets
     X_feature = impute_previous_target(X_feature, recycle_material)
@@ -193,24 +192,32 @@ def evaluate_feature_importance_addRandomColumn(X_feature, y_target, model):
 
     # Plot feature importances
     importance_df = pd.DataFrame(
-        {'Feature': combined_OriginalRandom_features.columns, 'Importance': feature_importances})
-    importance_df = importance_df.sort_values(by=['Feature', 'Importance'], ascending=[False, False])
+        {"Feature": combined_OriginalRandom_features.columns, "Importance": feature_importances}
+    )
+    importance_df = importance_df.sort_values(
+        by=["Feature", "Importance"], ascending=[False, False]
+    )
 
     # Assign colors based on feature type (original or random)
-    colors = ['blue' if col in X_feature.columns else 'orange' for col in importance_df['Feature']]
+    colors = ["blue" if col in X_feature.columns else "orange" for col in importance_df["Feature"]]
 
     # Plot original and random features side by side with different colors
     plt.figure(figsize=(12, 8))
-    sns.barplot(x='Importance', y='Feature', data=importance_df, palette=colors)
-    plt.xlabel('Importance')
-    plt.ylabel('Feature')
-    plt.title('Feature Importances')
+    sns.barplot(x="Importance", y="Feature", data=importance_df, palette=colors)
+    plt.xlabel("Importance")
+    plt.ylabel("Feature")
+    plt.title("Feature Importances")
 
     # Create a legend
     legend_elements = [
-        Line2D([0], [0], marker='s', color='w', markerfacecolor='blue', markersize=10, label='Original'),
-        Line2D([0], [0], marker='s', color='w', markerfacecolor='orange', markersize=10, label='Random')]
-    plt.legend(handles=legend_elements, title='Feature Type')
+        Line2D(
+            [0], [0], marker="s", color="w", markerfacecolor="blue", markersize=10, label="Original"
+        ),
+        Line2D(
+            [0], [0], marker="s", color="w", markerfacecolor="orange", markersize=10, label="Random"
+        ),
+    ]
+    plt.legend(handles=legend_elements, title="Feature Type")
 
     plt.show()
 
@@ -230,7 +237,9 @@ def evaluate_feature_importance_addRandomColumn(X_feature, y_target, model):
 
 
 # Define a function to evaluate feature importance based on a specified model
-def evaluate_feature_importance_with_frequency(X_feature, y_target, model, feature_importanceModel, num_iterations=20):
+def evaluate_feature_importance_with_frequency(
+    X_feature, y_target, model, feature_importanceModel, num_iterations=20
+):
     """
     Feature Importance Evaluation with Frequency
 
@@ -281,11 +290,10 @@ def evaluate_feature_importance_with_frequency(X_feature, y_target, model, featu
 
     # Visualize hits for each feature
     displayed_features = set()  # To keep track of displayed features
-    label_shift = 0.2  # Adjust this value for spacing between labels
     vertical_spacing = 0.015  # Adjust this value for vertical spacing between labels
 
     for feature, frequency in zip(features, frequencies):
-        color = 'green' if frequency > num_iterations / 2 else 'red'
+        color = "green" if frequency > num_iterations / 2 else "red"
         x_position = frequency - 1.5
         y_position = 0.002
 
@@ -296,13 +304,18 @@ def evaluate_feature_importance_with_frequency(X_feature, y_target, model, featu
         # Add vertical line and label for each feature
         pyplot.axvline(x_position, color=color)
         pyplot.text(x_position, y_position, feature)
-        displayed_features.add((feature, y_position))  # Keep track of displayed features and their positions
+        displayed_features.add(
+            (feature, y_position)
+        )  # Keep track of displayed features and their positions
 
     # Create a legend
-    legend_labels = ['Highly Significant', 'Not Significant']
-    legend_colors = ['green', 'red']
-    legend_patches = [pyplot.Line2D([0], [0], color=color, label=label) for color, label in zip(legend_colors, legend_labels)]
-    pyplot.legend(handles=legend_patches, loc='upper right')
+    legend_labels = ["Highly Significant", "Not Significant"]
+    legend_colors = ["green", "red"]
+    legend_patches = [
+        pyplot.Line2D([0], [0], color=color, label=label)
+        for color, label in zip(legend_colors, legend_labels)
+    ]
+    pyplot.legend(handles=legend_patches, loc="upper right")
 
     # Show the plot
     pyplot.show()
@@ -311,10 +324,16 @@ def evaluate_feature_importance_with_frequency(X_feature, y_target, model, featu
 
 
 # Best Hyperparameters resulted form Hyperparameter tuning
-best_params = {'bootstrap': True, 'max_depth': 80, 'min_samples_leaf': 1, 'min_samples_split': 3, 'n_estimators': 400}
+best_params = {
+    "bootstrap": True,
+    "max_depth": 80,
+    "min_samples_leaf": 1,
+    "min_samples_split": 3,
+    "n_estimators": 400,
+}
 
 # Get unique years from the data
-unique_years = recycle_material['Year'].unique()
+unique_years = recycle_material["Year"].unique()
 
 # Create an empty dictionary to store selected features for each year
 selected_features_dict = {}
@@ -333,7 +352,6 @@ for year in unique_years:
         selected_features = evaluate_feature_importance_addRandomColumn(X_feature, y_target, model)
 
         # evaluate feature importance based on frequency
-        evaluate_feature_importance_with_frequency(X_feature, y_target, model, evaluate_feature_importance_addRandomColumn)
-
-
-
+        evaluate_feature_importance_with_frequency(
+            X_feature, y_target, model, evaluate_feature_importance_addRandomColumn
+        )

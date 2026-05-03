@@ -1,0 +1,17 @@
+[project]
+name = "bluebox-data-analysis"
+version = "1.0.0"
+description = "Data analysis and ML pipeline for Canada's Blue Box recycling program"
+requires-python = ">=3.9"
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]

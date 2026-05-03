@@ -7,16 +7,18 @@ with hyperparameter optimization, we've got you covered. Assess model accuracy w
 and ensure stability with OOB Error vs. Number of Estimators. 💡
 """
 
+from collections import OrderedDict
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
+from sklearn.metrics import mean_absolute_error
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.preprocessing import StandardScaler
-from collections import OrderedDict
 from statsmodels.stats.outliers_influence import variance_inflation_factor
+
+from config import DATA_DIR
 
 
 # Function to add the previous year's target as a feature
@@ -32,11 +34,11 @@ def feature_target_selection(data_set, year_):
     - X_feature_ (DataFrame): Features for the specified year.
     - y_target_ (Series): Target variable for the specified year.
     """
-    year_data = data_set[data_set['Year'] == year_]
+    year_data = data_set[data_set["Year"] == year_]
 
     # Select columns before the target column
-    y_target_ = year_data['TOTAL Reported and/or Calculated Marketed Tonnes']
-    X_feature_ = year_data.drop(columns=['TOTAL Reported and/or Calculated Marketed Tonnes'])
+    y_target_ = year_data["TOTAL Reported and/or Calculated Marketed Tonnes"]
+    X_feature_ = year_data.drop(columns=["TOTAL Reported and/or Calculated Marketed Tonnes"])
 
     return X_feature_, y_target_
 
@@ -54,7 +56,9 @@ def calculate_vif(data_frame):
     """
     vif_data_ = pd.DataFrame()
     vif_data_["Variable"] = data_frame.columns
-    vif_data_["VIF"] = [variance_inflation_factor(data_frame.values, i) for i in range(data_frame.shape[1])]
+    vif_data_["VIF"] = [
+        variance_inflation_factor(data_frame.values, i) for i in range(data_frame.shape[1])
+    ]
     return vif_data_
 
 
@@ -80,11 +84,11 @@ def random_search(X_train, y_train, model):
     bootstrap = [True, False]
 
     random_grid = {
-        'n_estimators': n_estimators,
-        'max_depth': max_depth,
-        'min_samples_split': min_samples_split,
-        'min_samples_leaf': min_samples_leaf,
-        'bootstrap': bootstrap
+        "n_estimators": n_estimators,
+        "max_depth": max_depth,
+        "min_samples_split": min_samples_split,
+        "min_samples_leaf": min_samples_leaf,
+        "bootstrap": bootstrap,
     }
 
     # Randomized Search
@@ -95,7 +99,7 @@ def random_search(X_train, y_train, model):
         cv=3,
         verbose=2,
         random_state=42,
-        n_jobs=-1
+        n_jobs=-1,
     )
 
     # Fit the random search model
@@ -126,27 +130,31 @@ def grid_search(X_train, y_train, model, best_random):
 
     # Modify the param_grid based on random search results
     param_grid = {
-        'n_estimators': [best_random.n_estimators - 50, best_random.n_estimators, best_random.n_estimators + 50],
-        'max_depth': [
+        "n_estimators": [
+            best_random.n_estimators - 50,
+            best_random.n_estimators,
+            best_random.n_estimators + 50,
+        ],
+        "max_depth": [
             best_random.max_depth - 10 if best_random.max_depth is not None else default_max_depth,
             best_random.max_depth if best_random.max_depth is not None else default_max_depth,
-            best_random.max_depth + 10 if best_random.max_depth is not None else default_max_depth
+            best_random.max_depth + 10 if best_random.max_depth is not None else default_max_depth,
         ],
-        'min_samples_split': [best_random.min_samples_split - 2, best_random.min_samples_split,
-                              best_random.min_samples_split + 2],
-        'min_samples_leaf': [best_random.min_samples_leaf - 1, best_random.min_samples_leaf,
-                             best_random.min_samples_leaf + 1],
-        'bootstrap': [True]
+        "min_samples_split": [
+            best_random.min_samples_split - 2,
+            best_random.min_samples_split,
+            best_random.min_samples_split + 2,
+        ],
+        "min_samples_leaf": [
+            best_random.min_samples_leaf - 1,
+            best_random.min_samples_leaf,
+            best_random.min_samples_leaf + 1,
+        ],
+        "bootstrap": [True],
     }
 
     # Instantiate the grid search model
-    grid_search = GridSearchCV(
-        estimator=model,
-        param_grid=param_grid,
-        cv=3,
-        n_jobs=-1,
-        verbose=2
-    )
+    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=3, n_jobs=-1, verbose=2)
 
     # Fit the grid search model
     grid_search.fit(X_train, y_train)
@@ -192,8 +200,12 @@ def plot_oob_error_vs_estimators(X_train, y_train, min_estimators, max_estimator
     hyperparameter tuning on the Random Forest model's performance.
     """
     # Define a list of ensemble classifiers with their labels
-    ensemble_clfs = [("Random Forest ({0} max_depth)".format(max_depth),
-                      RandomForestRegressor(max_depth=max_depth, oob_score=True, random_state=0))]
+    ensemble_clfs = [
+        (
+            "Random Forest ({0} max_depth)".format(max_depth),
+            RandomForestRegressor(max_depth=max_depth, oob_score=True, random_state=0),
+        )
+    ]
 
     # Map a classifier name to a list of (<n_estimators>, <error rate>) pairs
     error_rate = OrderedDict((label, []) for label, _ in ensemble_clfs)
@@ -223,15 +235,10 @@ def plot_oob_error_vs_estimators(X_train, y_train, min_estimators, max_estimator
     plt.show()
 
 
-# Load data:
-# Define the file path
-file_path = r"C:\Users\admin\OneDrive\Desktop\Dataset\ML\result_classification.csv"
-
-# Read the CSV file into a DataFrame
-recycle_material = pd.read_csv(file_path)
+recycle_material = pd.read_csv(DATA_DIR / "result_classification.csv")
 
 # Get unique years from the data
-unique_years = recycle_material['Year'].unique()
+unique_years = recycle_material["Year"].unique()
 
 # Iterate through each year to improve the model, handle multicollinearity, prepare training and test data,
 # perform hyperparameter tuning using Randomized Search and Grid Search, and visualize OOB Error vs Estimators curve.
@@ -239,11 +246,18 @@ unique_years = recycle_material['Year'].unique()
 for year in unique_years:
     if year < 2021:  # Condition to limit the loop
 
-# Section 1: Model Improvement and Handling Multicollinearity👇
+        # Section 1: Model Improvement and Handling Multicollinearity👇
         # Remove irrelevant columns and handle multicollinearity
-        recycle_material_filtered = recycle_material.drop(columns=['Year', 'Cluster_Probabilities', 'Cluster_Labels',
-                                                                   'TOTAL Reported and/or Calculated Marketed Tonnes',
-                                                                   'Quadrant', 'Program Code'])
+        recycle_material_filtered = recycle_material.drop(
+            columns=[
+                "Year",
+                "Cluster_Probabilities",
+                "Cluster_Labels",
+                "TOTAL Reported and/or Calculated Marketed Tonnes",
+                "Quadrant",
+                "Program Code",
+            ]
+        )
 
         # Handle missing values and calculate VIF
         numerical_data = recycle_material_filtered.select_dtypes(include=[np.number])
@@ -252,7 +266,7 @@ for year in unique_years:
         vif_data = calculate_vif(numerical_data)
         print(vif_data)
 
-# Section 2: Prepare Test and Training Data for Regression using Random Forest👇
+        # Section 2: Prepare Test and Training Data for Regression using Random Forest👇
 
         # Add previous year target and operation cost as additional features
         X_feature, y_target = feature_target_selection(recycle_material, year)
@@ -264,8 +278,9 @@ for year in unique_years:
         y_target.reset_index(drop=True)
 
         # Prepare the training features and target
-        X_train = X_feature.drop(['Year', 'Program Code', 'Cluster_Probabilities', 'Cluster_Labels',
-                                  'Quadrant'], axis=1).copy()
+        X_train = X_feature.drop(
+            ["Year", "Program Code", "Cluster_Probabilities", "Cluster_Labels", "Quadrant"], axis=1
+        ).copy()
         y_train = y_target
 
         # Create an instance of StandardScaler
@@ -285,8 +300,9 @@ for year in unique_years:
         y_target_test.reset_index(drop=True)
 
         # Prepare the test features and target
-        X_test = X_feature_test.drop(['Year', 'Program Code', 'Cluster_Probabilities', 'Cluster_Labels',
-                                      'Quadrant'], axis=1).copy()
+        X_test = X_feature_test.drop(
+            ["Year", "Program Code", "Cluster_Probabilities", "Cluster_Labels", "Quadrant"], axis=1
+        ).copy()
         y_test = y_target_test
 
         # Transform the testing data using the scaler
@@ -297,7 +313,7 @@ for year in unique_years:
         model = RandomForestRegressor()
         model.fit(X_train_scaled, y_train)
 
-# Section 3: Hyperparameter Tuning using Randomized Search and Grid Search 👇
+        # Section 3: Hyperparameter Tuning using Randomized Search and Grid Search 👇
         # Perform Randomized Search
         best_random_hyperparameters = random_search(X_train_scaled, y_train, model)
 
@@ -306,11 +322,11 @@ for year in unique_years:
 
         # Create the final best model with the hyperparameters from Grid Search
         best_model = RandomForestRegressor(
-            n_estimators=best_hyperparameters['n_estimators'],
-            max_depth=best_hyperparameters['max_depth'],
-            min_samples_split=best_hyperparameters['min_samples_split'],
-            min_samples_leaf=best_hyperparameters['min_samples_leaf'],
-            bootstrap=True
+            n_estimators=best_hyperparameters["n_estimators"],
+            max_depth=best_hyperparameters["max_depth"],
+            min_samples_split=best_hyperparameters["min_samples_split"],
+            min_samples_leaf=best_hyperparameters["min_samples_leaf"],
+            bootstrap=True,
         )
 
         # Fit the final best model on the training data ********************************************
@@ -322,16 +338,18 @@ for year in unique_years:
         # Print the results
         print(f" Hyperparameter tuning for the year {year}:")
         print("Best Hyperparameters:", best_hyperparameters)
-        print("Best Model Accuracy as combination of Randomize Search and Grid Search: {:.2f}%".format(
-            best_model_accuracy))
+        print(
+            "Best Model Accuracy as combination of Randomize Search and Grid Search: {:.2f}%".format(
+                best_model_accuracy
+            )
+        )
 
-# Section 4: Perform OOB Error vs Estimators Curve Visualization and Hyperparameter Tuning👇
+        # Section 4: Perform OOB Error vs Estimators Curve Visualization and Hyperparameter Tuning👇
         # Plot the oob_error_vs_estimators curve to visualize hyperparameter tuning
-        plot_oob_error_vs_estimators(X_train, y_train, min_estimators=20, max_estimators=450, max_depth=80)
+        plot_oob_error_vs_estimators(
+            X_train, y_train, min_estimators=20, max_estimators=450, max_depth=80
+        )
 
     else:
         # Return True for years 2021 and beyond
         print("The prediction for the year 2022 is under construction")
-
-
-
