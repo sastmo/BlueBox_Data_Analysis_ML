@@ -7,7 +7,7 @@ This script provides a holistic approach to understanding and predicting recycli
 """
 
 import pandas as pd
-from GradiantBoostingClass import GradientBoostingModel
+from gradient_boosting_class import GradientBoostingModel
 
 
 # Function to load and manipulate data
