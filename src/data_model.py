@@ -1,7 +1,5 @@
 import numpy as np
 import pandas as pd
-from pmdarima.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 from config import DATA_DIR
@@ -41,15 +39,13 @@ def merge_data(market_volume, cost_revenue, payment_model):
     - merge_agg: DataFrame, merged data
     """
     # Merge dataframes
-    merge_agg = pd.merge(market_volume,
-                         payment_model,
-                         left_on='F key (Cost key)',
-                         right_on='Foreign Key(cost key)')
+    merge_agg = pd.merge(
+        market_volume, payment_model, left_on="F key (Cost key)", right_on="Foreign Key(cost key)"
+    )
 
-    merge_agg = pd.merge(merge_agg,
-                         cost_revenue,
-                         left_on='F key (Cost key)',
-                         right_on='Primary Key')
+    merge_agg = pd.merge(
+        merge_agg, cost_revenue, left_on="F key (Cost key)", right_on="Primary Key"
+    )
 
     return merge_agg
 
@@ -66,15 +62,26 @@ def preprocess_data(merge_agg):
     """
     # Define column names for tonnage regression
     column_names = [
-        'Total Households Serviced',
-        'Single Family Dwellings', 'Multi-Family Dwellings',
-        'User Pay Waste Collection (Pay-As-You-Throw)', 'Full User Pay',
-        'Partial User Pay', 'Bag Limit Program for Garbage Collection',
-        'Program Code', 'Municipal Group', 'Single Stream',
-        'Residential Collection Costs', 'Residential Processing Costs',
-        'Residential Depot/Transfer Costs', 'Residential Promotion & Education Costs',
-        'Interest on Municipal  Capital', 'Administration Costs',
-        'Total Gross Revenue', 'Year', 'TOTAL Reported and/or Calculated Marketed Tonnes']
+        "Total Households Serviced",
+        "Single Family Dwellings",
+        "Multi-Family Dwellings",
+        "User Pay Waste Collection (Pay-As-You-Throw)",
+        "Full User Pay",
+        "Partial User Pay",
+        "Bag Limit Program for Garbage Collection",
+        "Program Code",
+        "Municipal Group",
+        "Single Stream",
+        "Residential Collection Costs",
+        "Residential Processing Costs",
+        "Residential Depot/Transfer Costs",
+        "Residential Promotion & Education Costs",
+        "Interest on Municipal  Capital",
+        "Administration Costs",
+        "Total Gross Revenue",
+        "Year",
+        "TOTAL Reported and/or Calculated Marketed Tonnes",
+    ]
 
     # Select relevant columns
     market_agg = merge_agg[column_names]
@@ -83,11 +90,13 @@ def preprocess_data(merge_agg):
     def calculate_vif(data_frame):
         vif_data_ = pd.DataFrame()
         vif_data_["Variable"] = data_frame.columns
-        vif_data_["VIF"] = [variance_inflation_factor(data_frame.values, i) for i in range(data_frame.shape[1])]
+        vif_data_["VIF"] = [
+            variance_inflation_factor(data_frame.values, i) for i in range(data_frame.shape[1])
+        ]
         return vif_data_
 
     # Remove Year column
-    market_agg_filtered = market_agg.drop(columns=['Year'])
+    market_agg_filtered = market_agg.drop(columns=["Year"])
 
     # Handle missing values and calculate VIF
     numerical_data = market_agg_filtered.select_dtypes(include=[np.number])
@@ -96,24 +105,31 @@ def preprocess_data(merge_agg):
     vif_data_1 = calculate_vif(numerical_data)
 
     # Modify columns
-    market_agg['operation cost'] = market_agg['Residential Collection Costs'] + market_agg[
-        'Residential Processing Costs'] + \
-                                   market_agg['Residential Depot/Transfer Costs'] + market_agg['Administration Costs']
+    market_agg["operation cost"] = (
+        market_agg["Residential Collection Costs"]
+        + market_agg["Residential Processing Costs"]
+        + market_agg["Residential Depot/Transfer Costs"]
+        + market_agg["Administration Costs"]
+    )
 
-    market_agg['Program efficiency'] = ((market_agg['Total Households Serviced'] *
-                                         market_agg['TOTAL Reported and/or Calculated Marketed Tonnes']) ** 0.5) / \
-                                       market_agg['operation cost']
+    market_agg["Program efficiency"] = (
+        (
+            market_agg["Total Households Serviced"]
+            * market_agg["TOTAL Reported and/or Calculated Marketed Tonnes"]
+        )
+        ** 0.5
+    ) / market_agg["operation cost"]
 
-    market_agg['Interaction of Households Serviced and operation cost'] = market_agg['operation cost'] * market_agg[
-        'Total Households Serviced']
-
+    market_agg["Interaction of Households Serviced and operation cost"] = (
+        market_agg["operation cost"] * market_agg["Total Households Serviced"]
+    )
 
     columns_to_drop = [
-        'Residential Collection Costs',
-        'Residential Processing Costs',
-        'Residential Depot/Transfer Costs',
-        'Administration Costs',
-        'Partial User Pay'
+        "Residential Collection Costs",
+        "Residential Processing Costs",
+        "Residential Depot/Transfer Costs",
+        "Administration Costs",
+        "Partial User Pay",
     ]
 
     market_agg_filtered = market_agg.drop(columns=columns_to_drop)
@@ -123,21 +139,25 @@ def preprocess_data(merge_agg):
 
     # Swap column positions
     column_names = market_agg_filtered.columns.tolist()
-    column_index_1 = column_names.index('Interaction of Households Serviced and operation cost')
-    column_index_2 = column_names.index('TOTAL Reported and/or Calculated Marketed Tonnes')
-    column_names[column_index_1], column_names[column_index_2] = column_names[column_index_2], column_names[
-        column_index_1]
+    column_index_1 = column_names.index("Interaction of Households Serviced and operation cost")
+    column_index_2 = column_names.index("TOTAL Reported and/or Calculated Marketed Tonnes")
+    column_names[column_index_1], column_names[column_index_2] = (
+        column_names[column_index_2],
+        column_names[column_index_1],
+    )
     market_agg = market_agg_filtered[column_names]
 
     # Convert columns to boolean
     columns_to_convert_to_boolean = [
-        'User Pay Waste Collection (Pay-As-You-Throw)',
-        'Full User Pay',
-        'Bag Limit Program for Garbage Collection',
-        'Single Stream'
+        "User Pay Waste Collection (Pay-As-You-Throw)",
+        "Full User Pay",
+        "Bag Limit Program for Garbage Collection",
+        "Single Stream",
     ]
 
-    market_agg[columns_to_convert_to_boolean] = market_agg[columns_to_convert_to_boolean].astype(bool)
+    market_agg[columns_to_convert_to_boolean] = market_agg[columns_to_convert_to_boolean].astype(
+        bool
+    )
 
     return market_agg, vif_data_1, vif_data_2
 
@@ -150,5 +170,5 @@ print(market_agg.columns)
 print(vif_data_1)
 print(vif_data_2)
 
-with open(DATA_DIR / "market_agg.csv", 'w', newline='') as file:
+with open(DATA_DIR / "market_agg.csv", "w", newline="") as file:
     market_agg.to_csv(file, index=False)
